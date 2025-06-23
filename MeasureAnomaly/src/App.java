@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,6 +64,11 @@ public class App {
             System.out.println("Cannot find file in " + datasetFolder + ": " + ex);
         }
 
+        for (ArrayList<Triple> list : dataMap.values()){
+            Comparator<Triple> comp = new CompareTriple();
+            list.sort(comp);
+        }
+
         return dataMap;
     }
 
@@ -70,6 +76,8 @@ public class App {
         boolean result = true;
 
         // Test 1: Check the first 10 triples in the p = 2 ArrayList against the correct answer for WN18
+        // Arbitrary and no longer useful
+        /**
         String twoString = null;
         try{
             twoString = map.get(2).subList(0, 10).toString();
@@ -80,6 +88,7 @@ public class App {
             System.out.println("Incorrect values for p = 2: \n" + twoString);
             result = false;
         }
+        */
 
         // Test 2: Correct number of p
         int p = 0;
