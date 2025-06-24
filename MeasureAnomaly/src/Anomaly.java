@@ -1,44 +1,53 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Anomaly {
 
-    public static void nearSame(HashMap<Integer, ArrayList<Triple>> dataMap){
+    public static void findNearSame(HashMap<Integer, ArrayList<Triple>> dataMap){
         // pattern to match: (s)-[p]->(o)<-[pp]-(s)
-        // plan: 
-        // for one specific triple with p
-            // find a relation that has the same s and o and different pp
-            // for each following triple in p, is there a nearsame in pp? keep count
 
+        // access values: nearSameCnt[smaller p][larger p]
+        int[][] nearSameCnt = new int[dataMap.size()][dataMap.size()];
+        Comparator<Triple> c = new CompareTriple();
         for (ArrayList<Triple> tList : dataMap.values()){
-            if(tList.contains(new Triple(12, 13, 3))){
-                System.out.println("contains 12,13,311111111111");
-                // this does not work to identify triples
-            }
-            for (Triple t : tList){
-                int[] nearSameCnt = new int[dataMap.size()]; //assumes that p will be 0-n
-                // for each triple, compare to every other triple 
-                for (ArrayList<Triple> compList : dataMap.values()){
-                    // only compare if not the same p
-                    if (compList.get(0).p != t.p){
-                        for (Triple compT : compList){
-                            if (t.s == compT.s && t.o == compT.o){
-                                nearSameCnt[compT.p]++;
-                            }
+            for (ArrayList<Triple> compList: dataMap.values()){
+                if (tList.get(0).p < compList.get(0).p){
+                    int ptr = 0;
+                    int cmpPtr = 0;
+                    while (ptr < tList.size() && cmpPtr < compList.size()){
+                        int compVal = c.compare(tList.get(ptr), compList.get(cmpPtr));
+                        if (compVal == 0){
+                            nearSameCnt[tList.get(ptr).p][compList.get(cmpPtr).p]++;
+                            ptr++;
+                            cmpPtr++;
+                        } else if (compVal > 0){
+                            cmpPtr++;
+                        } else {
+                            ptr++;
                         }
                     }
                 }
-                // nearSameCnt now represents how many matches this specific triple has
-                System.out.print("Triple " + t + " has duplicates: [");
-                for (int i = 0; i < nearSameCnt.length; i++){
-                    if (i != 0){
-                        System.out.print(", ");
-                    }
-                    System.out.print(nearSameCnt[i]);
-                }
-                System.out.print("]\n");
             }
+        }
+
+        // printing results
+        System.out.println("Counts for the Near-Same Relations: ");
+        System.out.println("p  0  1  2 ");
+        for (int j = 0; j < nearSameCnt.length; j++){
+            System.out.print(j + " [");
+            for (int i = 0; i < nearSameCnt[0].length; i++){
+                if (i != 0){
+                    System.out.print(", ");
+                }
+                if (j < i){
+                    System.out.print(nearSameCnt[j][i]);
+                } else { 
+                    System.out.print("-");
+                }
+            }
+            System.out.println("]");
         }
     }
 
@@ -71,7 +80,7 @@ public class Anomaly {
         
         //System.out.println(map);
 
-        nearSame(map);
+        findNearSame(map);
     }
 
 }

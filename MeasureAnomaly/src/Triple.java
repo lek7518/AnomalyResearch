@@ -18,7 +18,6 @@ public class Triple {
         this.p = Integer.valueOf(t[2]);
     }
 
-
     @Override
     public String toString(){
         return "[s: " + s + ", o: " + o + ", p: " + p + "]";
@@ -27,7 +26,7 @@ public class Triple {
 
 class CompareTriple implements Comparator<Triple>{
 
-    // Compares two Triples with the same p value
+    // Compares two Triples, disregarding the p value
     @Override
     public int compare(Triple t1, Triple t2) {
         if (t1.s > t2.s){
