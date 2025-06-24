@@ -43,6 +43,26 @@ class CompareTriple implements Comparator<Triple>{
             }
         }
     }
+}
 
-    
+
+class CompareTripleByO implements Comparator<Triple>{
+
+    // Compares two triples by their o values first, disregarding p
+    @Override
+    public int compare(Triple t1, Triple t2) {
+        if (t1.o > t2.o){
+            return 1;
+        } else if (t1.o < t2.o){
+            return -1;
+        } else {
+            if (t1.s > t2.s){
+                return 1;
+            } else if (t1.s < t2.s){
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 }
