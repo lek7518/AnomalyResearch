@@ -51,6 +51,7 @@ public class Anomaly {
         }
     }
 
+
     public static void findNearReverse(HashMap<Integer, ArrayList<Triple>> dataMap){
         // have two copies of map, one with the values sorted by O and one sorted by S
         // then copy algorithm from near-same
@@ -112,7 +113,59 @@ public class Anomaly {
         }
     }
 
-    public static void cartesianProduct(){}
+
+    public static void findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap){
+        // WWW measurement for cp: total triples / (unique subjects * unqiue objects)
+        double[] result = new double[dataMap.size()];
+
+        for (ArrayList<Triple> tList : dataMap.values()){
+            int total = tList.size();
+
+            int subjects = 1;
+            int prevS = tList.get(0).s;
+            int currS;
+            for (int i = 1; i < tList.size(); i++){
+                currS = tList.get(i).s;
+                if (prevS != currS) {
+                    subjects++;
+                    prevS = currS;
+                }
+                
+            }
+
+            ArrayList<Triple> oList = new ArrayList<>(tList);
+            oList.sort(new CompareTripleByO());
+            int objects = 1;
+            int prevO = oList.get(0).o;
+            int currO;
+            for (int j = 1; j < oList.size(); j++){
+                currO = oList.get(j).o;
+                if (prevO != currO) {
+                    objects++;
+                    prevO = currO;
+                }
+            }
+
+            System.out.println("p" + tList.get(0).p + ": " + subjects + "/" +
+                total + " unique subjects; " + objects + "/" + total + " unique objects");
+
+
+            if (subjects*objects != 0){
+                result[tList.get(0).p] = total*1.0/(subjects*objects);
+            }
+        }
+
+        System.out.println("Cartesian Product factors for each p:");
+        System.out.print("[");
+            for (int i = 0; i < result.length; i++){
+                if (i != 0){
+                    System.out.print(", ");
+                }
+                System.out.print(String.format("%.3f", result[i]));
+            }
+            System.out.println("]");
+    }
+
 
     public static void main(String[] args){
         // testing near-same
@@ -139,7 +192,7 @@ public class Anomaly {
         map.put(2, p2);
         
         //System.out.println(map);
-        findNearSame(map);
+        //findNearSame(map);
 
         HashMap<Integer, ArrayList<Triple>> revMap = new HashMap<>(map);
         revMap.remove(2);
@@ -152,8 +205,16 @@ public class Anomaly {
         revMap.get(0).sort(c);
 
         //System.out.println(revMap);
-        findNearReverse(revMap);
+        //findNearReverse(revMap);
 
+        //findCartesianProduct(map);
+        HashMap<Integer, ArrayList<Triple>> cpMap = new HashMap<>();
+        ArrayList<Triple> cp0 = new ArrayList<>();
+        Collections.addAll(cp0, 
+            new Triple(20,12,0), new Triple(20, 20, 0), 
+            new Triple(20, 23, 0), new Triple(40, 12, 0),
+            new Triple(40, 20, 0), new Triple(40, 23, 0));
+        cpMap.put(0, cp0);
+        findCartesianProduct(cpMap);
     }
-
 }
