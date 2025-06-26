@@ -150,6 +150,9 @@ public class App {
             // "C:\Users\lklec\AnomalyResearch\Datasets\WN18\test2id.txt"
         String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
         var map = parseHashMap(currFolder);
-        System.out.println(testMap(map, currFolder));       
+        System.out.println(testMap(map, currFolder));  
+        //Anomaly.findCartesianProduct(map);     
+        //Anomaly.findNearSame(map);
+        Anomaly.findNearReverse(map); 
     }
 }

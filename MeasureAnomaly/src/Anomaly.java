@@ -5,13 +5,72 @@ import java.util.HashMap;
 
 public class Anomaly {
 
-    public static void findNearSame(HashMap<Integer, ArrayList<Triple>> dataMap){
-        // pattern to match: (s)-[p]->(o)<-[pp]-(s)
+    /**
+     * Prints type int[][] in matrix format. Both axis labeled as p.
+     * @param array double int array to print
+     */
+    private static void printDoubleArray(int[][] array){
+        System.out.print("p  ");
+        for(int p = 0; p < array[0].length; p++){
+            System.out.print(p + "  ");
+        }
+        System.out.println();
+        for (int j = 0; j < array.length; j++){
+            System.out.print(j + " [");
+            for (int i = 0; i < array[0].length; i++){
+                if (i != 0){
+                    System.out.print(", ");
+                }
+                if (j < i){
+                    System.out.print(array[j][i]);
+                } else { 
+                    // only half the matrice needed, since p on both axis
+                    System.out.print("-");
+                }
+            }
+            System.out.println("]");
+        }
+    }
 
-        // access values: nearSameCnt[smaller p][larger p]
+    private static void printArray(double[] array){
+        System.out.print("[");
+        for (int i = 0; i < array.length; i++){
+            if (i != 0){
+                System.out.print(", ");
+            }
+            System.out.print(String.format("%.3f", array[i]));
+        }
+        System.out.println("]");
+    }
+
+    private static int maxP (int[][] matrix, int p){
+        int result = matrix[p][p]; // this value is always zero
+        for (int i = 0; i < matrix[p].length; i++){
+            if (matrix[p][i] > result){
+                result = matrix[p][i];
+            }
+        }
+        for (int j = 0; j < matrix.length; j++){
+            if (matrix[j][p] > result){
+                result = matrix[j][p];
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Identifies quantity of near-same anomalies between each set of p.
+     * @param dataMap The map (representing a graph) to search in.
+     */
+    public static void findNearSame(HashMap<Integer, ArrayList<Triple>> dataMap){
+        // near-same anomalies follow the pattern: (s)-[p]->(o)<-[pp]-(s)
+
+        // to access values: nearSameCnt[smaller p][larger p]
         int[][] nearSameCnt = new int[dataMap.size()][dataMap.size()];
+        double[] nearSameMsmt = new double[dataMap.size()];
         Comparator<Triple> c = new CompareTriple();
         for (ArrayList<Triple> tList : dataMap.values()){
+            nearSameMsmt[tList.get(0).p] = tList.size();
             for (ArrayList<Triple> compList: dataMap.values()){
                 if (tList.get(0).p < compList.get(0).p){
                     int ptr = 0;
@@ -19,6 +78,7 @@ public class Anomaly {
                     while (ptr < tList.size() && cmpPtr < compList.size()){
                         int compVal = c.compare(tList.get(ptr), compList.get(cmpPtr));
                         if (compVal == 0){
+                            // near-same found, increment the count
                             nearSameCnt[tList.get(ptr).p][compList.get(cmpPtr).p]++;
                             ptr++;
                             cmpPtr++;
@@ -31,32 +91,27 @@ public class Anomaly {
                 }
             }
         }
-
         // printing results
         System.out.println("Counts for the Near-Same Relations: ");
-        System.out.println("p  0  1  2 ");
-        for (int j = 0; j < nearSameCnt.length; j++){
-            System.out.print(j + " [");
-            for (int i = 0; i < nearSameCnt[0].length; i++){
-                if (i != 0){
-                    System.out.print(", ");
-                }
-                if (j < i){
-                    System.out.print(nearSameCnt[j][i]);
-                } else { 
-                    System.out.print("-");
-                }
-            }
-            System.out.println("]");
+        printDoubleArray(nearSameCnt);
+        
+        for (int i = 0; i < dataMap.size(); i++){
+            nearSameMsmt[i] = 1.0*maxP(nearSameCnt, i)/nearSameMsmt[i];
         }
+        System.out.println("Measurements for Near-Same Anomalies: ");
+        printArray(nearSameMsmt);
     }
 
-
+    /**
+     * Counts the number of near-reverse anomalies between each set of p.
+     * @param dataMap The map (representing a graph) to search in.
+     */
     public static void findNearReverse(HashMap<Integer, ArrayList<Triple>> dataMap){
-        // have two copies of map, one with the values sorted by O and one sorted by S
-        // then copy algorithm from near-same
+        // near-reverse anomalies follow the pattern: (s)-[p]->(o)-[pp]->(s)
 
+        // The data map with arrays sorted by s-value first
         HashMap<Integer, ArrayList<Triple>> sSortedMap = dataMap;
+        // The data map with arrays sorted by o-value first
         HashMap<Integer, ArrayList<Triple>> oSortedMap = new HashMap<>();
         Comparator<Triple> oComp = new CompareTripleByO();
         for (ArrayList<Triple> list : sSortedMap.values()){
@@ -65,29 +120,31 @@ public class Anomaly {
             oSortedMap.put(list.get(0).p, oList);
         }
 
-        // access values: nearReverseCnt[smaller p][larger p]
+        // to access values: nearReverseCnt[smaller p][larger p]
         int[][] nearReverseCnt = new int[dataMap.size()][dataMap.size()];
+        double[] nearRevMsmt = new double[dataMap.size()];
         for (ArrayList<Triple> tList : sSortedMap.values()){
+            nearRevMsmt[tList.get(0).p] = tList.size();
             for (ArrayList<Triple> revList: oSortedMap.values()){
-                if (tList.get(0).p < revList.get(0).p){
+                if (tList.get(0).p < revList.get(0).p){ //can p = pp?
+                    // TODO if p == pp, then the result is doubled
                     int ptr = 0;
                     int revPtr = 0;
                     while (ptr < tList.size() && revPtr < revList.size()){
-                        if (tList.get(ptr).s == revList.get(revPtr).o 
-                         && tList.get(ptr).o == revList.get(revPtr).s){
-                            nearReverseCnt[tList.get(ptr).p][revList.get(revPtr).p]++;
-                            ptr++;
-                            revPtr++;
-                        } else if (tList.get(ptr).s > revList.get(revPtr).o){
+                        if (tList.get(ptr).s > revList.get(revPtr).o){
                             revPtr++;
                         } else if (tList.get(ptr).s < revList.get(revPtr).o){
                             ptr++;
                         } else {
-                            // tList s and revList o are equal
-                            if (tList.get(ptr).o > tList.get(ptr).s){
+                            // tList s and revList o are equal, compare lesser values
+                            if (tList.get(ptr).o > revList.get(revPtr).s){
                                 revPtr++;
-                            } else {
+                            } else if (tList.get(ptr).o < revList.get(revPtr).s){
                                 ptr++;
+                            } else {
+                                nearReverseCnt[tList.get(ptr).p][revList.get(revPtr).p]++;
+                                ptr++;
+                                revPtr++;
                             }
                         }
                     }
@@ -96,31 +153,30 @@ public class Anomaly {
         }
         // printing results
         System.out.println("Counts for the Near-Reverse Relations: ");
-        System.out.println("p  0  1  2 ");
-        for (int j = 0; j < nearReverseCnt.length; j++){
-            System.out.print(j + " [");
-            for (int i = 0; i < nearReverseCnt[0].length; i++){
-                if (i != 0){
-                    System.out.print(", ");
-                }
-                if (j < i){
-                    System.out.print(nearReverseCnt[j][i]);
-                } else { 
-                    System.out.print("-");
-                }
-            }
-            System.out.println("]");
+        printDoubleArray(nearReverseCnt);
+
+        for (int i = 0; i < dataMap.size(); i++){
+            nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
         }
+        System.out.println("Measurements for Near-Reverse Anomalies: ");
+        printArray(nearRevMsmt);
     }
 
-
+    /**
+     * Measures the amount of Cartesian product anomalies in a set of p.
+     * @param dataMap The map (representing a graph) to search in.
+     */
     public static void findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap){
-        // WWW measurement for cp: total triples / (unique subjects * unqiue objects)
+        // WWW measurement for Cartesian product anomalies: 
+            // total triples / (unique subjects * unqiue objects)
+        // to access values: result[p]    
         double[] result = new double[dataMap.size()];
 
         for (ArrayList<Triple> tList : dataMap.values()){
+            // total number of triples with predicate p
             int total = tList.size();
 
+            // number of unique subjects with p
             int subjects = 1;
             int prevS = tList.get(0).s;
             int currS;
@@ -133,6 +189,7 @@ public class Anomaly {
                 
             }
 
+            // number of unique objects with p
             ArrayList<Triple> oList = new ArrayList<>(tList);
             oList.sort(new CompareTripleByO());
             int objects = 1;
@@ -146,8 +203,8 @@ public class Anomaly {
                 }
             }
 
-            System.out.println("p" + tList.get(0).p + ": " + subjects + "/" +
-                total + " unique subjects; " + objects + "/" + total + " unique objects");
+            //System.out.println("p" + tList.get(0).p + ": " + subjects + "/" +
+                //total + " unique subjects; " + objects + "/" + total + " unique objects");
 
 
             if (subjects*objects != 0){
@@ -155,15 +212,21 @@ public class Anomaly {
             }
         }
 
+        // printing results
+        double cpSum = 0;
         System.out.println("Cartesian Product factors for each p:");
         System.out.print("[");
-            for (int i = 0; i < result.length; i++){
-                if (i != 0){
-                    System.out.print(", ");
-                }
-                System.out.print(String.format("%.3f", result[i]));
+        for (int i = 0; i < result.length; i++){
+            if (i != 0){
+                System.out.print(", ");
             }
-            System.out.println("]");
+            System.out.print(String.format("%.3f", result[i]));
+            cpSum += result[i];
+        }
+        System.out.println("]");
+
+        // sum of Cartesian products for all p
+        System.out.println("Cartesian sum is: " + cpSum);
     }
 
 
@@ -205,7 +268,7 @@ public class Anomaly {
         revMap.get(0).sort(c);
 
         //System.out.println(revMap);
-        //findNearReverse(revMap);
+        findNearReverse(revMap);
 
         //findCartesianProduct(map);
         HashMap<Integer, ArrayList<Triple>> cpMap = new HashMap<>();
@@ -215,6 +278,6 @@ public class Anomaly {
             new Triple(20, 23, 0), new Triple(40, 12, 0),
             new Triple(40, 20, 0), new Triple(40, 23, 0));
         cpMap.put(0, cp0);
-        findCartesianProduct(cpMap);
+        //findCartesianProduct(cpMap);
     }
 }
