@@ -148,11 +148,11 @@ public class App {
 
         // test text parsing with WN18 test set
             // "C:\Users\lklec\AnomalyResearch\Datasets\WN18\test2id.txt"
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K237";
         var map = parseHashMap(currFolder);
         System.out.println(testMap(map, currFolder));  
-        //Anomaly.findCartesianProduct(map);     
+        Anomaly.findCartesianProduct(map);     
         //Anomaly.findNearSame(map);
-        Anomaly.findNearReverse(map); 
+        //Anomaly.findNearReverse(map); 
     }
 }
