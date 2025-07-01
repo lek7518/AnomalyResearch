@@ -65,7 +65,6 @@ public class App {
     public static boolean testMap(HashMap<Integer, ArrayList<Triple>> map, String dataFile){
         boolean result = true;
 
-
         // Test 2: Correct number of p
         int p = 0;
         try{
@@ -122,8 +121,8 @@ public class App {
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
         scan.close();
-        var trainMap = parseHashMap(currFolder + "/train2id.txt", numPs);
-        System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
+        //var trainMap = parseHashMap(currFolder + "/train2id.txt", numPs);
+        //System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
 
         var validMap = parseHashMap(currFolder + "/valid2id.txt", numPs);
         System.out.println(testMap(validMap, currFolder + "/valid2id.txt")); 
@@ -131,9 +130,8 @@ public class App {
         var testMap = parseHashMap(currFolder + "/test2id.txt", numPs);
         System.out.println(testMap(testMap, currFolder + "/test2id.txt")); 
 
-        
-        //Anomaly.findCartesianProduct(map);    
-        //Anomaly.findNearSame(map);
-        //Anomaly.findNearReverse(map); 
+        Anomaly.findCartesianProduct(testMap);    
+        Anomaly.findNearSame(testMap);
+        Anomaly.findNearReverse(testMap); 
     }
 }

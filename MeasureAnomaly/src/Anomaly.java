@@ -92,7 +92,7 @@ public class Anomaly {
             }
         }
         // printing results
-        System.out.println("Counts for the Near-Same Relations: ");
+        System.out.println("\nCounts for the Near-Same Relations: ");
         printDoubleArray(nearSameCnt);
         
         for (int i = 0; i < dataMap.size(); i++){
@@ -152,7 +152,7 @@ public class Anomaly {
             }
         }
         // printing results
-        System.out.println("Counts for the Near-Reverse Relations: ");
+        System.out.println("\nCounts for the Near-Reverse Relations: ");
         printDoubleArray(nearReverseCnt);
 
         for (int i = 0; i < dataMap.size(); i++){
@@ -214,7 +214,7 @@ public class Anomaly {
 
         // printing results
         double cpSum = 0;
-        System.out.println("Cartesian Product factors for each p:");
+        System.out.println("\nCartesian Product factors for each p:");
         System.out.print("[");
         for (int i = 0; i < result.length; i++){
             if (i != 0){
