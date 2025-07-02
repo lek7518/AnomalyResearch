@@ -116,22 +116,31 @@ public class App {
     public static void main(String[] args) throws Exception {
         // test text parsing with WN18 test set
             // "C:\Users\lklec\AnomalyResearch\Datasets\WN18\test2id.txt"
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
         scan.close();
-        //var trainMap = parseHashMap(currFolder + "/train2id.txt", numPs);
-        //System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
 
+        System.out.println("Training set:");
+        var trainMap = parseHashMap(currFolder + "/train2id.txt", numPs);
+        System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
+        Anomaly.findNearSame(trainMap, numPs);
+        Anomaly.findNearReverse(trainMap, numPs); 
+        Anomaly.findCartesianProduct(trainMap);    
+
+        System.out.println("\nValidation set:");
         var validMap = parseHashMap(currFolder + "/valid2id.txt", numPs);
         System.out.println(testMap(validMap, currFolder + "/valid2id.txt")); 
+        Anomaly.findNearSame(validMap, numPs);
+        Anomaly.findNearReverse(validMap, numPs); 
+        Anomaly.findCartesianProduct(validMap);    
 
+        System.out.println("\nTest set:");
         var testMap = parseHashMap(currFolder + "/test2id.txt", numPs);
         System.out.println(testMap(testMap, currFolder + "/test2id.txt")); 
-
+        Anomaly.findNearSame(testMap, numPs);
+        Anomaly.findNearReverse(testMap, numPs); 
         Anomaly.findCartesianProduct(testMap);    
-        Anomaly.findNearSame(testMap);
-        Anomaly.findNearReverse(testMap); 
     }
 }
