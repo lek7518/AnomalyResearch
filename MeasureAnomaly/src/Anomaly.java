@@ -24,7 +24,7 @@ public class Anomaly {
                 if (j < i){
                     System.out.print(array[j][i]);
                 } else { 
-                    // only half the matrice needed, since p on both axis
+                    // only half the matrix needed, since p on both axis
                     System.out.print("-");
                 }
             }
@@ -103,13 +103,18 @@ public class Anomaly {
         //System.out.println("Measurements for Near-Same Anomalies: ");
         //printArray(nearSameMsmt);
 
+        int anomalyCount = 0;
         double avg = 0;
         for (int a = 0; a < numPs; a++){
             avg += nearSameMsmt[a];
+            if (nearSameMsmt[a] >= 0.99){
+                anomalyCount++;
+            }
         }
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
         System.out.println("Average Near-Same Value: " + avg);
+        System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
     }
 
     /**
@@ -172,13 +177,18 @@ public class Anomaly {
         //System.out.println("Measurements for Near-Reverse Anomalies: ");
         //printArray(nearRevMsmt);
 
+        int anomalyCount = 0;
         double avg = 0;
         for (int a = 0; a < numPs; a++){
             avg += nearRevMsmt[a];
+            if (nearRevMsmt[a] >= 0.99){
+                anomalyCount++;
+            }
         }
         // even though there are numPs p values, we only want to take average for however many ps are in this map
         avg = avg / dataMap.size();
         System.out.println("Average Near-Reverse Value: " + avg);
+        System.out.println("Number of near-reverse anomalies past .99 threshold: " + anomalyCount);
     }
 
     /**
@@ -205,7 +215,6 @@ public class Anomaly {
                     subjects++;
                     prevS = currS;
                 }
-                
             }
 
             // number of unique objects with p
@@ -225,7 +234,6 @@ public class Anomaly {
             //System.out.println("p" + tList.get(0).p + ": " + subjects + "/" +
                 //total + " unique subjects; " + objects + "/" + total + " unique objects");
 
-
             if (subjects*objects != 0){
                 result[currIndex] = total*1.0/(subjects*objects);
             }
@@ -233,6 +241,7 @@ public class Anomaly {
         }
 
         // printing results
+        int anomalyCount = 0;
         double cpSum = 0;
         //System.out.println("\nCartesian Product factors for each p:");
         //System.out.print("[");
@@ -244,11 +253,15 @@ public class Anomaly {
             System.out.print(String.format("%.3f", result[i]));
             */
             cpSum += result[i];
+            if (result[i] >= 0.8){
+                anomalyCount++;
+            } 
         }
         //System.out.println("]");
 
         // avg of Cartesian products for all p
         System.out.println("Cartesian average is: " + cpSum/result.length);
+        System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
     }
 
 
