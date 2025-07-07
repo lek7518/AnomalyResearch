@@ -32,13 +32,24 @@ public class Anomaly {
         }
     }
 
-    private static void printArray(double[] array){
+    public static void printArray(double[] array){
         System.out.print("[");
         for (int i = 0; i < array.length; i++){
             if (i != 0){
                 System.out.print(", ");
             }
             System.out.print(String.format("%.3f", array[i]));
+        }
+        System.out.println("]");
+    }
+
+    public static void printArray(int[] array){
+        System.out.print("[");
+        for (int i = 0; i < array.length; i++){
+            if (i != 0){
+                System.out.print(", ");
+            }
+            System.out.print(array[i]);
         }
         System.out.println("]");
     }
@@ -62,7 +73,7 @@ public class Anomaly {
      * Identifies quantity of near-same anomalies between each set of p.
      * @param dataMap The map (representing a graph) to search in.
      */
-    public static void findNearSame(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
+    public static double[] findNearSame(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // near-same anomalies follow the pattern: (s)-[p]->(o)<-[pp]-(s)
 
         // to access values: nearSameCnt[smaller p][larger p]
@@ -115,13 +126,14 @@ public class Anomaly {
         avg = avg / dataMap.size();
         System.out.println("Average Near-Same Value: " + avg);
         System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
+        return nearSameMsmt;
     }
 
     /**
      * Counts the number of near-reverse anomalies between each set of p.
      * @param dataMap The map (representing a graph) to search in.
      */
-    public static void findNearReverse(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
+    public static double[] findNearReverse(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // near-reverse anomalies follow the pattern: (s)-[p]->(o)-[pp]->(s)
 
         // The data map with arrays sorted by s-value first
@@ -189,13 +201,14 @@ public class Anomaly {
         avg = avg / dataMap.size();
         System.out.println("Average Near-Reverse Value: " + avg);
         System.out.println("Number of near-reverse anomalies past .99 threshold: " + anomalyCount);
+        return nearRevMsmt;
     }
 
     /**
      * Measures the amount of Cartesian product anomalies in a set of p.
      * @param dataMap The map (representing a graph) to search in.
      */
-    public static void findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap){
+    public static double[] findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap){
         // WWW measurement for Cartesian product anomalies: 
             // total triples / (unique subjects * unqiue objects)
         // to access values: result[p]    
@@ -262,6 +275,25 @@ public class Anomaly {
         // avg of Cartesian products for all p
         System.out.println("Cartesian average is: " + cpSum/result.length);
         System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
+        return result;
+    }
+
+
+    /**
+     * Finds the overall anomaly coefficient for a list of p values.
+     * @param nearSame near-same anomaly values for each p
+     * @param nearReverse near-reverse anomaly values for each p
+     * @param cartesian Cartesian product anomaly values for each p
+     * @return list of overal anomaly coefficient for each p value
+     */
+    public static double[] findOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian){
+        int numPs = nearSame.length;
+        double[] result = new double[numPs];
+        for (int i = 0; i < numPs; i++){
+            // overall anomaly coefficient is the greatest of the three anomalies for this p
+            result[i] = Double.max(Double.max(nearSame[i], nearReverse[i]), cartesian[i]);
+        }
+        return result;
     }
 
 

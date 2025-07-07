@@ -23,56 +23,26 @@ public class App {
     }
 
     /**
-     * Takes in a text file that contains triples and creates a hash map
+     * Takes in a folder that contains files with training, validation, 
+     * and test triples and creates a hash map
      * @return hash map with predicate as the key, value is an ArrayList of Triples
      */
-    public static HashMap<Integer, ArrayList<Triple>> parseHashMap(String dataFilePath, int numPs){
+    public static HashMap<Integer, ArrayList<Triple>> parseHashMap(
+        String dataFolder, int numPs, boolean train, boolean valid, boolean test){
         HashMap<Integer, ArrayList<Triple>> dataMap = new HashMap<>();
         try{
-            File f = new File(dataFilePath);
-            Scanner scan = new Scanner(f);
-            System.out.println("Adding " + scan.nextLine() + " triples to a new hash map from " + f.getName());                
-            int pCount = 0;
-            while(scan.hasNextLine()){
-                String[] nums = scan.nextLine().split(" ");
-                Triple t = new Triple(nums);
-                if(pCount < numPs){
-                    if (dataMap.get(t.p) == null){
-                        dataMap.put(t.p, new ArrayList<Triple>());
-                        dataMap.get(t.p).add(t);
-                        pCount++;
-                    } else {
-                        dataMap.get(t.p).add(t);
-                    }
-                } else {
-                    dataMap.get(t.p).add(t);
-                }
+            ArrayList<String> filenames = new ArrayList<>();
+            if (train){
+                filenames.add("/train2id.txt");
             }
-            
-            scan.close(); 
-        }
-        catch (FileNotFoundException ex){
-            System.out.println("Cannot find file in " + dataFilePath + ": " + ex);
-        }
-
-        for (ArrayList<Triple> list : dataMap.values()){
-            Comparator<Triple> comp = new CompareTriple();
-            list.sort(comp);
-        }
-
-        return dataMap;
-    }
-
-    /**
-     * Takes in a text file that contains triples and creates a hash map
-     * @return hash map with predicate as the key, value is an ArrayList of Triples
-     */
-    public static HashMap<Integer, ArrayList<Triple>> parseCombinedHashMap(String datasetFolder, int numP){
-        HashMap<Integer, ArrayList<Triple>> dataMap = new HashMap<>();
-        try{
-            String[] filenames = {"/test2id.txt", "/train2id.txt", "/valid2id.txt"};
+            if (valid){
+                filenames.add("/valid2id.txt");
+            }
+            if (test){
+                filenames.add("/test2id.txt");
+            }
             for (String filename : filenames){
-                File f = new File(datasetFolder + filename);
+                File f = new File(dataFolder + filename);
                 Scanner scan = new Scanner(f);
                 //int n = Integer.valueOf(scan.nextLine());
                 System.out.println("Adding " + scan.nextLine() + " triples to a new hash map from " + f.getName());
@@ -80,7 +50,7 @@ public class App {
                 while(scan.hasNextLine()){
                     String[] nums = scan.nextLine().split(" ");
                     Triple t = new Triple(nums);
-                    if(pCount < numP){
+                    if(pCount < numPs){
                         if (dataMap.get(t.p) == null){
                             dataMap.put(t.p, new ArrayList<Triple>());
                             dataMap.get(t.p).add(t);
@@ -97,7 +67,7 @@ public class App {
             }
         }
         catch (FileNotFoundException ex){
-            System.out.println("Cannot find file in " + datasetFolder + ": " + ex);
+            System.out.println("Cannot find file in " + dataFolder + ": " + ex);
         }
 
         for (ArrayList<Triple> list : dataMap.values()){
@@ -107,6 +77,24 @@ public class App {
 
         return dataMap;
     }
+
+
+    public static HashMap<Integer, ArrayList<Triple>> parseHashMap(
+        String dataFolder, int numPs, int train, int valid, int test){
+            boolean trainBool = true;
+            boolean validBool = true;
+            boolean testBool = true;
+            if (train == 0){
+                trainBool = false;
+            }
+            if (valid == 0){
+                validBool = false;
+            }
+            if (test == 0){
+                testBool = false;
+            }
+            return parseHashMap(dataFolder, numPs, trainBool, validBool, testBool);
+        }
 
 
     public static boolean testMap(HashMap<Integer, ArrayList<Triple>> map, String dataFile){
@@ -175,44 +163,116 @@ public class App {
         return result;
     }
 
+    /**
+     * Sorts p values into "buckets" for display as a histogram.
+     * Assumes all values are between 0 and 1.
+     * @param anomalies the anomaly coefficient of each p to sort
+     * @param numBuckets the number of buckets to divide values into
+     * @return the number of p values in each bucket
+     */
+    public static int[] histogramValues (double[] anomalies, int numBuckets){
+        int[] quantity = new int[numBuckets];
+        double step = 1.0 / numBuckets;
+        for (int i = 0; i < numBuckets; i++){
+            double curMin = i * step;
+            double curMax = (i * step) + step;
+            for (int j = 0; j < anomalies.length; j++){
+                if (anomalies[j] >= curMin && anomalies[j] < curMax){
+                    quantity[i]++;
+                }
+                if (anomalies[j] == curMax && i == numBuckets-1){
+                    quantity[i]++;
+                }
+            }
+        }
+
+        return quantity;
+    }
+
+    /**
+     * Sorts each triple into a "bucket" based on p value for use in a histogram. 
+     * Assumes all p values are between 0 and 1.
+     * @param anomalies the anomaly coefficient of each p
+     * @param numBuckets the number of buckets to divide values into
+     * @return the number of triples in each bucket
+     */
+    public static int[] histogramMapValues (double[] anomalies, HashMap<Integer, ArrayList<Triple>> map, int numBuckets){
+        int[] quantity = new int[numBuckets];
+        double step = 1.0 / numBuckets;
+        for (int i = 0; i < numBuckets; i++){
+            double curMin = i * step;
+            double curMax = (i * step) + step;
+            for (int p = 0; p < anomalies.length; p++){
+                if (anomalies[p] >= curMin && anomalies[p] < curMax){
+                    if (map.get(p) != null){
+                        quantity[i] += map.get(p).size();
+                    }
+                }
+                if (anomalies[p] == curMax && i == numBuckets-1){
+                    if (map.get(p) != null) {
+                        quantity[i] += map.get(p).size();
+                    }
+                }
+            }
+        }
+
+        return quantity;
+    }
+
 
     public static void main(String[] args) throws Exception {
         // test text parsing with WN18 test set
             // "C:\Users\lklec\AnomalyResearch\Datasets\WN18\test2id.txt"
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K237";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
         scan.close();
         System.out.println("Number of relations P: " + numPs);
 
-        System.out.println("Training set:");
-        var trainMap = parseHashMap(currFolder + "/train2id.txt", numPs);
-        System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
-        Anomaly.findNearSame(trainMap, numPs);
-        Anomaly.findNearReverse(trainMap, numPs); 
-        Anomaly.findCartesianProduct(trainMap);    
-/*
+        /*
+        System.out.println("\nTraining set:");
+        var newTrainMap  = parseHashMap(currFolder, numPs, true, false, false);
+        //var newTrainMap = parseHashMap(currFolder, numPs, 1, 0, 0);
+        System.out.println(testMap(newTrainMap, currFolder + "/train2id.txt")); 
+        Anomaly.findNearSame(newTrainMap, numPs);
+        Anomaly.findNearReverse(newTrainMap, numPs); 
+        Anomaly.findCartesianProduct(newTrainMap); 
+
         System.out.println("\nValidation set:");
-        var validMap = parseHashMap(currFolder + "/valid2id.txt", numPs);
+        var validMap = parseHashMap(currFolder, numPs, 0, 1, 0);
         System.out.println(testMap(validMap, currFolder + "/valid2id.txt")); 
         Anomaly.findNearSame(validMap, numPs);
         Anomaly.findNearReverse(validMap, numPs); 
         Anomaly.findCartesianProduct(validMap);    
 
         System.out.println("\nTest set:");
-        var testMap = parseHashMap(currFolder + "/test2id.txt", numPs);
+        var testMap = parseHashMap(currFolder, numPs, false, false, true);
         System.out.println(testMap(testMap, currFolder + "/test2id.txt")); 
         Anomaly.findNearSame(testMap, numPs);
         Anomaly.findNearReverse(testMap, numPs); 
         Anomaly.findCartesianProduct(testMap);
-        *//*
-        System.out.println("\nCombined set:");
-        var combinedMap = parseCombinedHashMap(currFolder, numPs);
-        testMap(combinedMap, currFolder);
-        Anomaly.findNearSame(combinedMap, numPs);
-        Anomaly.findNearReverse(combinedMap, numPs); 
-        Anomaly.findCartesianProduct(combinedMap);
         */
+
+        var map = parseHashMap(currFolder, numPs, 1, 1, 1);
+        var newTrainMap  = parseHashMap(currFolder, numPs, true, false, false);
+        var testMap = parseHashMap(currFolder, numPs, false, false, true);
+        var validMap = parseHashMap(currFolder, numPs, false, true, false);
+
+        double[] anomalies = Anomaly.findOverallAnomaly(Anomaly.findNearSame(map, numPs), 
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map));
+        //System.out.println("Overall Anomalies: ");
+        //Anomaly.printArray(anomalies);
+        System.out.println("Histogram of p values: ");
+        Anomaly.printArray(histogramValues(anomalies, 5));
+        System.out.println("histogram values with map quantities-- overall:");
+        Anomaly.printArray(histogramMapValues(anomalies, map, 5));
+        System.out.println("histogram values with map quantities-- training:");
+        Anomaly.printArray(histogramMapValues(anomalies, newTrainMap, 5));
+        System.out.println("histogram values with map quantities-- valid:");
+        Anomaly.printArray(histogramMapValues(anomalies, validMap, 5));
+        System.out.println("histogram values with map quantities-- test:");
+        Anomaly.printArray(histogramMapValues(anomalies, testMap, 5));
+
     }
 }
