@@ -5,24 +5,27 @@ import numpy as np
 
 
 def main():
-    '''
-    # WN18
-    p_counts = [4, 0, 0, 0, 14]
-    all_counts = [34569, 0, 0, 0, 116873]
-    train_counts = [32232, 0, 0, 0, 109210]
-    valid_counts = [1165, 0, 0, 0, 3835]
-    test_counts = [1172, 0, 0, 0, 3828]
-    single_histogram(p_counts, "WN18 p Distribution")
-    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN18")
+    # TODO automate saving all the images
+    # TODO abbreviate large format data labels (Hetionet)
+    # TODO move grey set labels up above center (WN11)
 
-    # WN18RR
-    p_counts = [11, 0, 0, 0, 0]
-    all_counts = [93003, 0, 0, 0, 0]
-    train_counts = [86835, 0, 0, 0, 0]
-    valid_counts = [3034, 0, 0, 0, 0]
-    test_counts = [3134, 0, 0, 0, 0]
-    single_histogram(p_counts, "WN18RR p Distribution")
-    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN18RR")
+    # BioKG
+    p_counts = [12, 0, 1, 0, 4]
+    all_counts = [2015813, 0, 28033, 0, 24152]
+    train_counts = [2005708, 0, 27926, 0, 24024]
+    valid_counts = [5065, 0, 55, 0, 50]
+    test_counts = [5040, 0, 52, 0, 78]
+    single_histogram(p_counts, "BioKG p Distribution")
+    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "BioKG")
+
+    # FB13
+    p_counts = [8, 2, 1, 0, 2]
+    all_counts = [200148, 66753, 66663, 0, 12309]
+    train_counts = [177747, 66753, 59423, 0, 12309]
+    valid_counts = [4464, 0, 1444, 0, 0]
+    test_counts = [17937, 0, 5796, 0, 0]
+    single_histogram(p_counts, "FB13 p Distribution")
+    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "FB13")
 
     # FB15k
     p_counts = [38, 43, 35, 18, 1211]
@@ -41,12 +44,15 @@ def main():
     test_counts = [12466, 5134, 1321, 701, 844]
     single_histogram(p_counts, "FB15k-237 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "FB15k-237")
-    '''
-    # BioKG
-
-    # FB13
 
     # Hetionet
+    p_counts = [22, 0, 1, 0, 1]
+    all_counts = [2050109, 0, 102240, 0, 97848]
+    train_counts = [2039827, 0, 101737, 0, 97382]
+    valid_counts = [5164, 0, 238, 0, 224]
+    test_counts = [5118, 0, 265, 0, 242]
+    single_histogram(p_counts, "Hetionet p Distribution")
+    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "Hetionet")
 
     # NELL-995
     p_counts = [154, 24, 11, 10, 1]
@@ -58,6 +64,31 @@ def main():
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "NELL-995")
 
     # WN11
+    p_counts = [2, 0, 0, 1, 8]
+    all_counts = [2851, 0, 0, 40161, 82722]
+    train_counts = [2758, 0, 0, 36178, 73645]
+    valid_counts = [14, 0, 0, 816, 1779]
+    test_counts = [79, 0, 0, 3167, 7298]
+    single_histogram(p_counts, "WN11 p Distribution")
+    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN11")
+
+    # WN18
+    p_counts = [4, 0, 0, 0, 14]
+    all_counts = [34569, 0, 0, 0, 116873]
+    train_counts = [32232, 0, 0, 0, 109210]
+    valid_counts = [1165, 0, 0, 0, 3835]
+    test_counts = [1172, 0, 0, 0, 3828]
+    single_histogram(p_counts, "WN18 p Distribution")
+    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN18")
+
+    # WN18RR
+    p_counts = [11, 0, 0, 0, 0]
+    all_counts = [93003, 0, 0, 0, 0]
+    train_counts = [86835, 0, 0, 0, 0]
+    valid_counts = [3034, 0, 0, 0, 0]
+    test_counts = [3134, 0, 0, 0, 0]
+    single_histogram(p_counts, "WN18RR p Distribution")
+    anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN18RR")
 
     # YAGO3-10
     p_counts = [28, 5, 1, 2, 1]
