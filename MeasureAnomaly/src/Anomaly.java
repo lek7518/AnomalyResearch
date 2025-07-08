@@ -124,8 +124,8 @@ public class Anomaly {
         }
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
-        System.out.println("Average Near-Same Value: " + avg);
-        System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
+        //System.out.println("Average Near-Same Value: " + avg);
+        //System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
         return nearSameMsmt;
     }
 
@@ -199,8 +199,8 @@ public class Anomaly {
         }
         // even though there are numPs p values, we only want to take average for however many ps are in this map
         avg = avg / dataMap.size();
-        System.out.println("Average Near-Reverse Value: " + avg);
-        System.out.println("Number of near-reverse anomalies past .99 threshold: " + anomalyCount);
+        //System.out.println("Average Near-Reverse Value: " + avg);
+        //System.out.println("Number of near-reverse anomalies past .99 threshold: " + anomalyCount);
         return nearRevMsmt;
     }
 
@@ -273,8 +273,8 @@ public class Anomaly {
         //System.out.println("]");
 
         // avg of Cartesian products for all p
-        System.out.println("Cartesian average is: " + cpSum/result.length);
-        System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
+        //System.out.println("Cartesian average is: " + cpSum/result.length);
+        //System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
         return result;
     }
 

@@ -221,9 +221,7 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
-        // test text parsing with WN18 test set
-            // "C:\Users\lklec\AnomalyResearch\Datasets\WN18\test2id.txt"
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -261,18 +259,17 @@ public class App {
 
         double[] anomalies = Anomaly.findOverallAnomaly(Anomaly.findNearSame(map, numPs), 
             Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map));
-        //System.out.println("Overall Anomalies: ");
+        //System.out.println("Anomalies for each p: ");
         //Anomaly.printArray(anomalies);
-        System.out.println("Histogram of p values: ");
+        System.out.print("p_counts = ");
         Anomaly.printArray(histogramValues(anomalies, 5));
-        System.out.println("histogram values with map quantities-- overall:");
+        System.out.print("all_counts = ");
         Anomaly.printArray(histogramMapValues(anomalies, map, 5));
-        System.out.println("histogram values with map quantities-- training:");
+        System.out.print("train_counts = ");
         Anomaly.printArray(histogramMapValues(anomalies, newTrainMap, 5));
-        System.out.println("histogram values with map quantities-- valid:");
+        System.out.print("valid_counts = ");
         Anomaly.printArray(histogramMapValues(anomalies, validMap, 5));
-        System.out.println("histogram values with map quantities-- test:");
+        System.out.print("test_counts = ");
         Anomaly.printArray(histogramMapValues(anomalies, testMap, 5));
-
     }
 }
