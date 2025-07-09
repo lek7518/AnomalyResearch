@@ -48,7 +48,7 @@ public class App {
                 System.out.println("Adding " + scan.nextLine() + " triples to a new hash map from " + f.getName());
                 int pCount = 0;
                 while(scan.hasNextLine()){
-                    String[] nums = scan.nextLine().split(" ");
+                    String[] nums = scan.nextLine().split("[\t ]");
                     Triple t = new Triple(nums);
                     if(pCount < numPs){
                         if (dataMap.get(t.p) == null){
@@ -221,7 +221,7 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN11";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -253,6 +253,7 @@ public class App {
         */
 
         var map = parseHashMap(currFolder, numPs, 1, 1, 1);
+        System.out.println("Test Result: " + testMap(map, currFolder));
         var newTrainMap  = parseHashMap(currFolder, numPs, true, false, false);
         var testMap = parseHashMap(currFolder, numPs, false, false, true);
         var validMap = parseHashMap(currFolder, numPs, false, true, false);

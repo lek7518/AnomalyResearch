@@ -6,9 +6,6 @@ import numpy as np
 
 def main():
     # TODO automate saving all the images
-    # TODO abbreviate large format data labels (Hetionet)
-    # TODO move grey set labels up above center (WN11)
-
     # BioKG
     p_counts = [12, 0, 1, 0, 4]
     all_counts = [2015813, 0, 28033, 0, 24152]
@@ -17,6 +14,7 @@ def main():
     test_counts = [5040, 0, 52, 0, 78]
     single_histogram(p_counts, "BioKG p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "BioKG")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "BioKG")
 
     # FB13
     p_counts = [8, 2, 1, 0, 2]
@@ -26,6 +24,7 @@ def main():
     test_counts = [17937, 0, 5796, 0, 0]
     single_histogram(p_counts, "FB13 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "FB13")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "FB13")
 
     # FB15k
     p_counts = [38, 43, 35, 18, 1211]
@@ -35,6 +34,7 @@ def main():
     test_counts = [4385, 1747, 3568, 320, 49051]
     single_histogram(p_counts, "FB15k p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "FB15k")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "FB15k")
 
     # FB15k-237
     p_counts = [95, 53, 29, 29, 31]
@@ -44,6 +44,7 @@ def main():
     test_counts = [12466, 5134, 1321, 701, 844]
     single_histogram(p_counts, "FB15k-237 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "FB15k-237")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "FB15k-237")
 
     # Hetionet
     p_counts = [22, 0, 1, 0, 1]
@@ -53,6 +54,7 @@ def main():
     test_counts = [5118, 0, 265, 0, 242]
     single_histogram(p_counts, "Hetionet p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "Hetionet")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "Hetionet")
 
     # NELL-995
     p_counts = [154, 24, 11, 10, 1]
@@ -62,6 +64,7 @@ def main():
     test_counts = [1713, 1854, 425, 0, 0]
     single_histogram(p_counts, "NELL-995 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "NELL-995")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "NELL-995")
 
     # WN11
     p_counts = [2, 0, 0, 1, 8]
@@ -71,6 +74,7 @@ def main():
     test_counts = [79, 0, 0, 3167, 7298]
     single_histogram(p_counts, "WN11 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN11")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "WN11")
 
     # WN18
     p_counts = [4, 0, 0, 0, 14]
@@ -80,6 +84,7 @@ def main():
     test_counts = [1172, 0, 0, 0, 3828]
     single_histogram(p_counts, "WN18 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN18")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "WN18")
 
     # WN18RR
     p_counts = [11, 0, 0, 0, 0]
@@ -89,6 +94,7 @@ def main():
     test_counts = [3134, 0, 0, 0, 0]
     single_histogram(p_counts, "WN18RR p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "WN18RR")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "WN18RR")
 
     # YAGO3-10
     p_counts = [28, 5, 1, 2, 1]
@@ -98,6 +104,7 @@ def main():
     test_counts = [1453, 72, 297, 1686, 1492]
     single_histogram(p_counts, "YAGO3-10 p Distribution")
     anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "YAGO3-10")
+    percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "YAGO3-10")
 
 
 def anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, dataset_name):
@@ -114,13 +121,13 @@ def anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, 
     itr = 0
     for k, ax in ax_dict.items():
         values, bns, bars = ax.hist(bins[:-1], bins, weights=counts[itr], rwidth=.99)
-        ax.bar_label(bars)
+        ax.bar_label(bars, fmt='%d')
         ax.margins(y=0.1)
         itr += 1
 
-    kw = dict(ha="center", va="center", fontsize=14, color="darkgrey")
+    kw = dict(ha="center", va="center", fontsize=14, color="grey")
     for k, ax in ax_dict.items():
-        ax.text(0.5, 0.5, k, transform=ax.transAxes, **kw)
+        ax.text(0.5, 0.75, k, transform=ax.transAxes, **kw)
 
     fig.suptitle(dataset_name + " Anomaly Distribution Across Splits")
     plt.show()
@@ -133,6 +140,50 @@ def single_histogram(counts, title):
     plt.xlabel("Anomaly Coefficient")
     plt.ylabel("Number of Relations, p")
     plt.title(title)
+    plt.show()
+
+
+def percentify(counts, total):
+    for c in range(len(counts)):
+        counts[c] = counts[c]/total * 100
+    return counts
+
+
+def percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, dataset_name):
+    p_count = sum(p_counts)
+    all_count = sum(all_counts)
+    train_count = sum(train_counts)
+    valid_count = sum(valid_counts)
+    test_count = sum(test_counts)
+    labels = ("[0.0-0.2)", "[0.2-0.4)", "[0.4-0.6)", "[0.6-0.8)", "[0.8-1.0]")
+    percents = {
+        'p': percentify(p_counts, p_count),
+        'All': percentify(all_counts, all_count),
+        'Train': percentify(train_counts, train_count),
+        'Valid': percentify(valid_counts, valid_count),
+        'Test': percentify(test_counts, test_count)
+    }
+    x = np.arange(len(labels))
+    width = 0.15
+    multiplier = 0
+    fig, ax = plt.subplots(layout='constrained')
+    curr_color = 0
+    colors = ["silver", "purple", "xkcd:turquoise", "xkcd:orange", "yellowgreen"]
+
+    for attribute, measurement in percents.items():
+        offset = width * multiplier
+        rects = ax.bar(x + offset, measurement, width, label=attribute, color=colors[curr_color])
+        ax.bar_label(rects, padding=3, fmt='{:.0f}', fontsize=8)
+        multiplier += 1
+        curr_color += 1
+
+    ax.set_ylabel('Percent of data (%)')
+    ax.set_xlabel('Anomaly coefficient value')
+    ax.set_title(dataset_name + ': Distribution of anomalies by data split')
+    ax.set_xticks(x + width*2, labels)
+    ax.margins(y=0.2)
+    ax.legend(loc='upper left', ncols=5)
+
     plt.show()
 
 
