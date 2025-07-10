@@ -5,7 +5,6 @@ import numpy as np
 
 def main():
     # TODO individual histogram colors to match percentage colors
-    # TODO darker/bolder titles on individual histograms
     figs = []
 
     # BioKG
@@ -62,8 +61,8 @@ def main():
     p_counts = [154, 24, 11, 10, 1]
     all_counts = [123018, 19352, 7573, 3468, 802]
     train_counts = [121075, 17244, 7089, 3468, 802]
-    valid_counts = [230, 254, 59, 0, 0]
-    test_counts = [1713, 1854, 425, 0, 0]
+    valid_counts = [971, 1054, 242, 0, 0]
+    test_counts = [972, 1054, 242, 0, 0]
     figs.append(single_histogram(p_counts, "NELL-995 p Distribution"))
     figs.append(anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, "NELL-995"))
     figs.append(percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, "NELL-995"))
@@ -132,7 +131,7 @@ def anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, 
         ax.margins(y=0.1)
         itr += 1
 
-    kw = dict(ha="center", va="center", fontsize=14, color="grey")
+    kw = dict(ha="center", va="center", fontsize=14, color="black")
     for k, ax in ax_dict.items():
         ax.text(0.5, 0.75, k, transform=ax.transAxes, **kw)
 
