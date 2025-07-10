@@ -219,9 +219,30 @@ public class App {
         return quantity;
     }
 
+    public static void printHistogramCounts(String currFolder, int numPs){
+        var map = parseHashMap(currFolder, numPs, 1, 1, 1);
+        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
+        var testMap = parseHashMap(currFolder, numPs, false, false, true);
+        var validMap = parseHashMap(currFolder, numPs, false, true, false);
+
+        double[] anomalies = Anomaly.findOverallAnomaly(Anomaly.findNearSame(map, numPs), 
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map));
+
+        System.out.print("p_counts = ");
+        Anomaly.printArray(histogramValues(anomalies, 5));
+        System.out.print("all_counts = ");
+        Anomaly.printArray(histogramMapValues(anomalies, map, 5));
+        System.out.print("train_counts = ");
+        Anomaly.printArray(histogramMapValues(anomalies, trainMap, 5));
+        System.out.print("valid_counts = ");
+        Anomaly.printArray(histogramMapValues(anomalies, validMap, 5));
+        System.out.print("test_counts = ");
+        Anomaly.printArray(histogramMapValues(anomalies, testMap, 5));
+    }
+
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN11";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -252,25 +273,6 @@ public class App {
         Anomaly.findCartesianProduct(testMap);
         */
 
-        var map = parseHashMap(currFolder, numPs, 1, 1, 1);
-        System.out.println("Test Result: " + testMap(map, currFolder));
-        var newTrainMap  = parseHashMap(currFolder, numPs, true, false, false);
-        var testMap = parseHashMap(currFolder, numPs, false, false, true);
-        var validMap = parseHashMap(currFolder, numPs, false, true, false);
-
-        double[] anomalies = Anomaly.findOverallAnomaly(Anomaly.findNearSame(map, numPs), 
-            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map));
-        //System.out.println("Anomalies for each p: ");
-        //Anomaly.printArray(anomalies);
-        System.out.print("p_counts = ");
-        Anomaly.printArray(histogramValues(anomalies, 5));
-        System.out.print("all_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, map, 5));
-        System.out.print("train_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, newTrainMap, 5));
-        System.out.print("valid_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, validMap, 5));
-        System.out.print("test_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, testMap, 5));
+        printHistogramCounts(currFolder, numPs);
     }
 }
