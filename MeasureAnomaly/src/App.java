@@ -242,22 +242,28 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN11";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
         scan.close();
         System.out.println("Number of relations P: " + numPs);
 
-        /*
+        
         System.out.println("\nTraining set:");
-        var newTrainMap  = parseHashMap(currFolder, numPs, true, false, false);
-        //var newTrainMap = parseHashMap(currFolder, numPs, 1, 0, 0);
-        System.out.println(testMap(newTrainMap, currFolder + "/train2id.txt")); 
-        Anomaly.findNearSame(newTrainMap, numPs);
-        Anomaly.findNearReverse(newTrainMap, numPs); 
-        Anomaly.findCartesianProduct(newTrainMap); 
-
+        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
+        System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
+        Anomaly.findNearSame(trainMap, numPs);
+        Anomaly.findNearReverse(trainMap, numPs); 
+        Anomaly.findCartesianProduct(trainMap); 
+        Anomaly.findReflexive(trainMap);
+        //var startTime = System.currentTimeMillis();
+        Anomaly.findSymmetric(trainMap);
+        //var stopTime = System.currentTimeMillis();
+        //System.out.println("Elapsed time to find symmetric relations: " + (stopTime-startTime));
+        Anomaly.findDuplicate(trainMap);
+        Anomaly.findTransitive(trainMap);
+/*
         System.out.println("\nValidation set:");
         var validMap = parseHashMap(currFolder, numPs, 0, 1, 0);
         System.out.println(testMap(validMap, currFolder + "/valid2id.txt")); 
@@ -271,8 +277,7 @@ public class App {
         Anomaly.findNearSame(testMap, numPs);
         Anomaly.findNearReverse(testMap, numPs); 
         Anomaly.findCartesianProduct(testMap);
-        */
-
-        printHistogramCounts(currFolder, numPs);
+*/
+        //printHistogramCounts(currFolder, numPs);
     }
 }
