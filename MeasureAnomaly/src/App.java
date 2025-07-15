@@ -242,7 +242,7 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN11";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18RR";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());

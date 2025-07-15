@@ -295,8 +295,8 @@ public class Anomaly {
                 nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
             }
         }
-        //System.out.println("Measurements for Near-Reverse Anomalies: ");
-        //printArray(nearRevMsmt);
+        System.out.println("Measurements for Near-Reverse Anomalies: ");
+        printArray(nearRevMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -372,8 +372,8 @@ public class Anomaly {
                 symmetricMsmt[i] = 1.0*symmetricCnt[i]/symmetricMsmt[i];
             }
         }
-        //    System.out.println("Measurements for Symmetric Anomalies: ");
-        //  printArray(symmetricMsmt);
+        System.out.println("Measurements for Symmetric Anomalies: ");
+        printArray(symmetricMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -468,7 +468,6 @@ public class Anomaly {
 
     public static double[] findTransitive(HashMap<Integer, ArrayList<Triple>> dataMap){
         // transitive anomalies follow the pattern: (s)-[p]->(x)-[p]->(o), (s)-[p]->(o)
-        // TODO not working all the way yet
 
         int[] transitiveCnt = new int[dataMap.size()];
 
@@ -492,17 +491,19 @@ public class Anomaly {
                     int xPtr = 0;
                     int tPtr = 0;
                     while (xPtr < xList.size() && tPtr < tList.size()){
-                        if (xList.get(xPtr) == tList.get(tPtr).s){
+                        var xItem = xList.get(xPtr);
+                        var tItem = tList.get(tPtr);
+                        if (xItem.equals(tItem.s)){
                             // found an xs that matches this xo, now does it's o also exist in x list
-                            if(xList.contains(tList.get(tPtr).o)){
-                                transitiveCnt[tList.get(tPtr).p]++;
-                                System.out.println(tList.get(tPtr));
-                                xPtr++;
+                            if(xList.contains(tItem.o)){
+                                transitiveCnt[tItem.p]++;
+                                //System.out.println(tItem);
+                                //xPtr++;
                                 tPtr++;
                             } else {
                                 tPtr++;
                             }
-                        } else if (xList.get(xPtr) < tList.get(tPtr).s){
+                        } else if (xItem < tItem.s){
                             xPtr++;
                         } else {
                             tPtr++;
@@ -597,10 +598,10 @@ public class Anomaly {
         Comparator<Triple> rc = new CompareTriple();
         ArrayList<Triple> rp0 = new ArrayList<>();
         Collections.addAll(rp0, 
-            new Triple(20,72,0), new Triple(72, 10, 0), 
-            new Triple(20, 10, 0), new Triple(42, 34, 0));
+            new Triple(20,72,2), new Triple(72, 10, 2), 
+            new Triple(20, 10, 2), new Triple(42, 34, 2));
         rp0.sort(rc);
-        reflexiveMap.put(0, rp0);
+        reflexiveMap.put(2, rp0);
         ArrayList<Triple> rp1 = new ArrayList<>();
         Collections.addAll(rp1, 
             new Triple(12, 13, 1), new Triple(13,14,1), 
@@ -611,10 +612,33 @@ public class Anomaly {
         reflexiveMap.put(1, rp1);
         ArrayList<Triple> rp2 = new ArrayList<>();
         Collections.addAll(rp2, 
-            new Triple(16,15,2), new Triple( 15,13,2), 
-            new Triple(13,12,2), new Triple(16, 13, 2));
+            new Triple(103,3513,0), new Triple( 103,6835,0), 
+            new Triple(3513, 103,0), new Triple( 3513,6835,0), 
+            new Triple(6835,103,0), new Triple(6835, 3513, 0));
         rp2.sort(c);
-        reflexiveMap.put(2, rp2);
+        reflexiveMap.put(0, rp2);
+        ArrayList<Triple> rp3 = new ArrayList<>();
+        Collections.addAll(rp3,
+            new Triple(14, 86, 3), new Triple(14, 25, 3), new Triple(86, 14, 3),
+            new Triple(320, 14, 3), new Triple(25, 14, 3), new Triple(14, 320, 3),
+            new Triple(86, 320, 3), new Triple(86, 25, 3), new Triple(25, 86, 3),
+            new Triple(320, 86, 3));
+        rp3.sort(c);
+        reflexiveMap.put(3, rp3);
+        // TODO remove
+        ArrayList<Triple> rp4 = new ArrayList<>();
+        Collections.addAll(rp4,
+            new Triple(2, 1, 4));
+        rp4.sort(c);
+        reflexiveMap.put(4, rp4);
+        ArrayList<Triple> rp5 = new ArrayList<>();
+        Collections.addAll(rp5,
+            new Triple(2, 1, 5), new Triple(2, 3, 5), new Triple(2, 4, 5),
+            new Triple(2, 5, 5), new Triple(4, 2, 5), new Triple(4, 3, 5),
+            new Triple(3, 5, 5));
+        rp5.sort(c);
+        reflexiveMap.put(5, rp5);
+        
         
         System.out.println(reflexiveMap);
         findTransitive(reflexiveMap);
