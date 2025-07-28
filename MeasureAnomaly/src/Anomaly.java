@@ -73,9 +73,12 @@ public class Anomaly {
     /**
      * Identifies quantity of near-same anomalies between each set of p.
      * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return the final measurement for each p
      */
     public static double[] findNearSame(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // near-same anomalies follow the pattern: (s)-[p]->(o)<-[pp]-(s)
+        // (s, p', o) => (s, p, o)
 
         // to access values: nearSameCnt[smaller p][larger p]
         int[][] nearSameCnt = new int[numPs][numPs];
@@ -104,7 +107,7 @@ public class Anomaly {
             }
         }
         // printing results
-        //System.out.println("\nCounts for the Near-Same Relations: ");
+        //System.out.println("\nCounts (Support) for the Near-Same Relations: ");
         //printDoubleArray(nearSameCnt);
         
         for (int i = 0; i < numPs; i++){
@@ -112,7 +115,7 @@ public class Anomaly {
                 nearSameMsmt[i] = 1.0*maxP(nearSameCnt, i)/nearSameMsmt[i];
             }
         }
-        //System.out.println("Measurements for Near-Same Anomalies: ");
+        //System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
         //printArray(nearSameMsmt);
 
         int anomalyCount = 0;
@@ -126,7 +129,7 @@ public class Anomaly {
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
         //System.out.println("Average Near-Same Value: " + avg);
-        //System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
+        System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
         return nearSameMsmt;
     }
 
@@ -134,10 +137,11 @@ public class Anomaly {
      /**
      * Identifies quantity of reflexive anomalies in a set of p.
      * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return the final measurement for each p
      */
-    public static double[] findDuplicate(HashMap<Integer, ArrayList<Triple>> dataMap){
+    public static double[] findDuplicate(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // duplicate anomalies are when there are multiple occurances of the same: (s)-[p]->(o)
-        int numPs = dataMap.size();
         int[] duplicateCnt = new int[numPs];
         double[] duplicateMsmt = new double[numPs];
         Comparator<Triple> c = new CompareTriple();
@@ -185,8 +189,8 @@ public class Anomaly {
         }
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
-        System.out.println("Average Duplicate Value: " + avg);
-        System.out.println("Number of duplicate anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
+        //System.out.println("Average Duplicate Value: " + avg);
+        //System.out.println("Number of duplicate anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
         return duplicateMsmt;
     }
 
@@ -194,11 +198,12 @@ public class Anomaly {
     /**
      * Identifies quantity of reflexive anomalies in a set of p.
      * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return the final measurement for each p
      */
-    public static double[] findReflexive(HashMap<Integer, ArrayList<Triple>> dataMap){
+    public static double[] findReflexive(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // reflexive anomalies follow the pattern: (s)-[p]->(s)
 
-        int numPs = dataMap.size();
         int[] reflexiveCnt = new int[numPs];
         double[] reflexiveMsmt = new double[numPs];
         for (ArrayList<Triple> tList : dataMap.values()){
@@ -232,8 +237,8 @@ public class Anomaly {
         }
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
-        System.out.println("Average Reflexive Value: " + avg);
-        System.out.println("Number of reflexive anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
+        //System.out.println("Average Reflexive Value: " + avg);
+        //System.out.println("Number of reflexive anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
         return reflexiveMsmt;
     }
 
@@ -241,9 +246,12 @@ public class Anomaly {
     /**
      * Counts the number of near-reverse anomalies between each set of p.
      * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return the final measurement for each p
      */
     public static double[] findNearReverse(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // near-reverse anomalies follow the pattern: (s)-[p]->(o)-[pp]->(s)
+        // (o, p', s) => (s, p, o)
 
         // The data map with arrays sorted by s-value first
         HashMap<Integer, ArrayList<Triple>> sSortedMap = dataMap;
@@ -262,7 +270,7 @@ public class Anomaly {
         for (ArrayList<Triple> tList : sSortedMap.values()){
             nearRevMsmt[tList.get(0).p] = tList.size();
             for (ArrayList<Triple> revList: oSortedMap.values()){
-                if (tList.get(0).p < revList.get(0).p){ //can p = pp? if p == pp, then the result is doubled
+                if (tList.get(0).p < revList.get(0).p){ 
                     int ptr = 0;
                     int revPtr = 0;
                     while (ptr < tList.size() && revPtr < revList.size()){
@@ -287,7 +295,7 @@ public class Anomaly {
             }
         }
         // printing results
-        //System.out.println("\nCounts for the Near-Reverse Relations: ");
+        //System.out.println("\nCounts (Support) for the Near-Reverse Relations: ");
         //printDoubleArray(nearReverseCnt);
 
         for (int i = 0; i < numPs; i++){
@@ -295,8 +303,8 @@ public class Anomaly {
                 nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
             }
         }
-        System.out.println("Measurements for Near-Reverse Anomalies: ");
-        printArray(nearRevMsmt);
+        //System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
+        //printArray(nearRevMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -308,8 +316,8 @@ public class Anomaly {
         }
         // even though there are numPs p values, we only want to take average for however many ps are in this map
         avg = avg / dataMap.size();
-        System.out.println("Average Near-Reverse Value: " + avg);
-        System.out.println("Number of near-reverse anomalies past .99 threshold: " + anomalyCount);
+        //System.out.println("Average Near-Reverse Value: " + avg);
+        //System.out.println("Number of near-reverse anomalies past .99 threshold: " + anomalyCount);
         return nearRevMsmt;
     }
 
@@ -317,11 +325,13 @@ public class Anomaly {
     /**
      * Identifies quantity of symmetric anomalies in a set of p.
      * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return the final measurement for each p
      */
-    public static double[] findSymmetric(HashMap<Integer, ArrayList<Triple>> dataMap){
+    public static double[] findSymmetric(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // symmetric anomalies follow the pattern: (s)-[p]->(o)-[p]->(s)
+        // (o, p, s) => (s, p, o)
 
-        int numPs = dataMap.size();
         int[] symmetricCnt = new int[numPs];
         double[] symmetricMsmt = new double[numPs];
 
@@ -361,10 +371,7 @@ public class Anomaly {
         }
 
         // printing results
-
-        //TODO remember that this is counting each individual relation that is a reverse,
-                // and near-reverse is counting each pair (so this is doubled)
-        //System.out.println("\nCounts for the Symmetric Relations: ");
+        //System.out.println("\nCounts (Support) for the Symmetric Relations: ");
         //printArray(symmetricCnt);
 
         for (int i = 0; i < numPs; i++){
@@ -372,8 +379,8 @@ public class Anomaly {
                 symmetricMsmt[i] = 1.0*symmetricCnt[i]/symmetricMsmt[i];
             }
         }
-        System.out.println("Measurements for Symmetric Anomalies: ");
-        printArray(symmetricMsmt);
+        //System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
+        //printArray(symmetricMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -385,8 +392,8 @@ public class Anomaly {
         }
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
-        System.out.println("Average Symmetric Value: " + avg);
-        System.out.println("Number of symmetric anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
+        //System.out.println("Average Symmetric Value: " + avg);
+        //System.out.println("Number of symmetric anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
         return symmetricMsmt;
     }
 
@@ -394,16 +401,20 @@ public class Anomaly {
     /**
      * Measures the amount of Cartesian product anomalies in a set of p.
      * @param dataMap The map (representing a graph) to search in.
+     * @return the final measurement for each p
      */
     public static double[] findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap){
         // WWW measurement for Cartesian product anomalies: 
-            // total triples / (unique subjects * unqiue objects)
-        // to access values: result[p]    
+            // total triples / (unique subjects * unique objects)
         double[] result = new double[dataMap.size()];
         int currIndex = 0;
         for (ArrayList<Triple> tList : dataMap.values()){
             // total number of triples with predicate p
             int total = tList.size();
+
+            if (tList.get(0).p.equals(55)){
+                System.out.print(".");
+            }
 
             // number of unique subjects with p
             int subjects = 1;
@@ -443,21 +454,21 @@ public class Anomaly {
         // printing results
         int anomalyCount = 0;
         double cpSum = 0;
-        //System.out.println("\nCartesian Product factors for each p:");
-        //System.out.print("[");
+        System.out.println("\nCartesian Product factors for each p:");
+        System.out.print("[");
         for (int i = 0; i < result.length; i++){
-            /**
+            
             if (i != 0){
                 System.out.print(", ");
             }
             System.out.print(String.format("%.3f", result[i]));
-            */
+            
             cpSum += result[i];
             if (result[i] >= 0.8){
                 anomalyCount++;
             } 
         }
-        //System.out.println("]");
+        System.out.println("]");
 
         // avg of Cartesian products for all p
         //System.out.println("Cartesian average is: " + cpSum/result.length);
@@ -466,13 +477,185 @@ public class Anomaly {
     }
 
 
-    public static double[] findTransitive(HashMap<Integer, ArrayList<Triple>> dataMap){
-        // transitive anomalies follow the pattern: (s)-[p]->(x)-[p]->(o), (s)-[p]->(o)
+    public static double[] oneToMany(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
+        // (s, p, o') => (s, p, o) such that o' <> o
+        int[] counts = new int[numPs];
+        double[] measurements = new double[numPs];
 
-        int[] transitiveCnt = new int[dataMap.size()];
+        for (ArrayList<Triple> tList : dataMap.values()){
+            // count how many times the same subject appears in a different triple
+            int p = tList.get(0).p;
+            if (p == 55){
+                System.out.println("hey");
+            }
+            measurements[p] = tList.size();
+            int curr = 0;
+            while (curr < tList.size()){
+                boolean sFound = false;
+                if (curr != 0){
+                    if (tList.get(curr).s.equals(tList.get(curr-1).s)){
+                        if (!tList.get(curr).o.equals(tList.get(curr-1).o)){
+                            counts[p]++;
+                            sFound = true;
+                        } else {
+                            int i = curr-1;
+                            while (i >=0 && tList.get(curr).s.equals(tList.get(i).s)){
+                                if (!tList.get(curr).o.equals(tList.get(i).o)){
+                                    counts[p]++;
+                                    sFound = true;
+                                    break;
+                                }
+                                i--;
+                            }
+                        }
+                    }
+                } 
+                if (curr != tList.size()-1 && !sFound) {
+                    if (tList.get(curr).s.equals(tList.get(curr+1).s)){
+                        if (!tList.get(curr).o.equals(tList.get(curr+1).o)){
+                            counts[p]++;
+                        } else {
+                            int i = curr+1;
+                            while (i < tList.size() && tList.get(curr).s.equals(tList.get(i).s)){
+                                if (!tList.get(curr).o.equals(tList.get(i).o)){
+                                    counts[p]++;
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                }
+                curr++;
+            }
+        }
+
+        // printing results
+        //System.out.println("\nCounts (Support) for the 1:N Relations: ");
+        //printArray(counts);
+
+        for (int i = 0; i < numPs; i++){
+            if (measurements[i] != 0){
+                measurements[i] = 1.0*counts[i]/measurements[i];
+            }
+        }
+        
+        System.out.println("Measurements (Head Coverage) for 1:N Relations: ");
+        printArray(measurements);
+
+        int anomalyCount = 0;
+        double avg = 0;
+        for (int a = 0; a < numPs; a++){
+            avg += measurements[a];
+            if (measurements[a] >= 0.99){
+                anomalyCount++;
+            }
+        }
+        // only consider the number of ps we actually have for the average, not numPs
+        avg = avg / dataMap.size();
+        //System.out.println("Average 1:N Value: " + avg);
+        //System.out.println("Number of 1:N anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
+        return measurements;
+    }
+
+
+    public static double[] manyToOne(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
+        //(s', p, o) => (s, p, o) such that s' <> s
+        int[] counts = new int[numPs];
+        double[] measurements = new double[numPs];
+
+        for (ArrayList<Triple> forwardList : dataMap.values()){
+            // count how many times the same object appears in a different triple
+            ArrayList<Triple> tList = new ArrayList<Triple>(forwardList);
+            tList.sort(new CompareTripleByO());
+            int p = tList.get(0).p;
+            measurements[p] = tList.size();
+            int curr = 0;
+            while (curr < tList.size()){
+                boolean oFound = false;
+                if (curr != 0){
+                    if (tList.get(curr).o.equals(tList.get(curr-1).o)){
+                        if (!tList.get(curr).s.equals(tList.get(curr-1).s)){
+                            counts[p]++;
+                            oFound = true;
+                        } else {
+                            int i = curr-1;
+                            while (i >= 0 && tList.get(curr).o.equals(tList.get(i).o)){
+                                if (!tList.get(curr).s.equals(tList.get(i).s)){
+                                    counts[p]++;
+                                    oFound = true;
+                                    break;
+                                }
+                                i--;
+                            }
+                        }
+                    }
+                } 
+                if (curr != tList.size()-1 && !oFound) {
+                    if (tList.get(curr).o.equals(tList.get(curr+1).o)){
+                        if (!tList.get(curr).s.equals(tList.get(curr+1).s)){
+                            counts[p]++;
+                        } else {
+                            int i = curr+1;
+                            while (i < tList.size() && tList.get(curr).o.equals(tList.get(i).o)){
+                                if (!tList.get(curr).s.equals(tList.get(i).s)){
+                                    counts[p]++;
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                }
+                curr++;
+            }
+        }
+
+        // printing results
+        //System.out.println("\nCounts (Support) for the N:1 Relations: ");
+        //printArray(counts);
+
+        for (int i = 0; i < numPs; i++){
+            if (measurements[i] != 0){
+                measurements[i] = 1.0*counts[i]/measurements[i];
+            }
+        }
+        
+        System.out.println("Measurements (Head Coverage) for N:1 Relations: ");
+        printArray(measurements);
+
+        int anomalyCount = 0;
+        double avg = 0;
+        for (int a = 0; a < numPs; a++){
+            avg += measurements[a];
+            if (measurements[a] >= 0.99){
+                anomalyCount++;
+            }
+        }
+        // only consider the number of ps we actually have for the average, not numPs
+        avg = avg / dataMap.size();
+        //System.out.println("Average N:1 Value: " + avg);
+        //System.out.println("Number of N:1 anomalies past .99 threshold: " + anomalyCount + " out of " + numPs);
+        return measurements;
+    }
+
+
+    /**
+     * Measures the amount of Transitive relations in a set of p.
+     * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return an array of the final Transitive measurement for each p.
+     */
+    public static double[] findTransitive(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
+        // transitive anomalies follow the pattern: (s)-[p]->(x)-[p]->(o), (s)-[p]->(o)
+        // (s, p, x) ^ (x, p, o) => (s, p, o)
+
+        int[] headCnt = new int[numPs];
+        double[] transitiveMsmt = new double[numPs];
 
         // for each p value
         for (ArrayList<Triple> tList : dataMap.values()){
+            transitiveMsmt[tList.get(0).p] = tList.size();
 
             // find relations with same s value, and store their o values
             Map<Integer, ArrayList<Integer>> map = new HashMap<>();
@@ -482,6 +665,11 @@ public class Anomaly {
                 }
                 map.get(t.s).add(t.o);
             }
+
+            int hCount = 0;
+            // for keeping track of what relations have been counted already
+            Map<Integer, ArrayList<Integer>> countingMap = new HashMap<>();
+
             for (Map.Entry<Integer, ArrayList<Integer>> entry : map.entrySet()){
                 Integer currS = entry.getKey();
                 ArrayList<Integer> xList = entry.getValue();
@@ -491,14 +679,20 @@ public class Anomaly {
                     int xPtr = 0;
                     int tPtr = 0;
                     while (xPtr < xList.size() && tPtr < tList.size()){
-                        var xItem = xList.get(xPtr);
-                        var tItem = tList.get(tPtr);
+                        Integer xItem = xList.get(xPtr);
+                        Triple tItem = tList.get(tPtr);
                         if (xItem.equals(tItem.s)){
                             // found an xs that matches this xo, now does it's o also exist in x list
                             if(xList.contains(tItem.o)){
-                                transitiveCnt[tItem.p]++;
-                                //System.out.println(tItem);
-                                //xPtr++;
+                                //add item to counting map to keep track
+                                if (countingMap.get(currS) == null){
+                                    countingMap.put(currS, new ArrayList<Integer>());
+                                }
+                                // only add head to counting map
+                                if (!countingMap.get(currS).contains(tItem.o)){
+                                    countingMap.get(currS).add(tItem.o);
+                                    hCount++;
+                                }
                                 tPtr++;
                             } else {
                                 tPtr++;
@@ -511,15 +705,111 @@ public class Anomaly {
                     }
                 }
             }
-
+            headCnt[tList.get(0).p] = hCount;
         }
 
-        System.out.println("Counts for Transitive anomalies: ");
-        printArray(transitiveCnt);
+        System.out.println("Support for Transitive Relations");
+        printArray(headCnt);
 
-        //Count is the number of transitive anomalies, which involves a set of 3 triples
+        for (int i = 0; i < numPs; i++){
+            if (transitiveMsmt[i] != 0){
+                transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
+            }
+        }
+        System.out.println("Transitive Measurements (Head Coverage): ");
+        printArray(transitiveMsmt);
 
-        return null;
+        int anomalyCount = 0;
+        double avg = 0;
+        for (int a = 0; a < numPs; a++){
+            avg += transitiveMsmt[a];
+            if (transitiveMsmt[a] >= 0.99){
+                anomalyCount++;
+            }
+        }
+        // only consider the number of ps we actually have for the average, not numPs
+        avg = avg / dataMap.size();
+        //System.out.println("Average Transitive Value: " + avg);
+
+        return transitiveMsmt;
+    }
+
+    /**
+     * Measures the amount of Transitive relations in a set of p.
+     * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of p's in the complete dataset
+     * @return an array of the final Transitive measurement for each p.
+     */
+    public static double[] newTransitive(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
+        // transitive anomalies follow the pattern: (s)-[p]->(x)-[p]->(o), (s)-[p]->(o)
+        // (s, p, x) ^ (x, p, o) => (s, p, o)
+        // Very slow compared to findTransitive() function
+
+        int[] headCnt = new int[numPs];
+        double[] transitiveMsmt = new double[numPs];
+
+        // for each p value
+        for (ArrayList<Triple> tList : dataMap.values()){   
+
+            transitiveMsmt[tList.get(0).p] = tList.size();
+
+            // find relations with same s value, and store their o values
+            Map<Integer, ArrayList<Integer>> map = new HashMap<>();
+            for (Triple t : tList){
+                if (map.get(t.s) == null){
+                    map.put(t.s, new ArrayList<Integer>());
+                }
+                map.get(t.s).add(t.o);
+            }
+
+            // how many relations have been involved in a transitive relationship
+            int hCount = 0;
+            for (Map.Entry<Integer, ArrayList<Integer>> entry : map.entrySet()){
+                Integer currS = entry.getKey();
+                ArrayList<Integer> xList = entry.getValue();
+                if (xList.size() >= 2){
+                    ArrayList<Triple> sortedTList = new ArrayList<Triple>(tList);
+                    sortedTList.sort(new CompareTripleByO());
+                    Collections.sort(xList);
+                    // look an o value to match the [s->o] o value
+                    // when you find a matching o, see if it has an x that is in the xList to get [x->o]
+                    int xPtr = 0;
+                    int tPtr = 0;
+                    while (xPtr < xList.size() && tPtr < sortedTList.size()){
+                        Integer xItem = xList.get(xPtr);
+                        Triple tItem = sortedTList.get(tPtr);
+                        if (xItem.equals(tItem.o)){
+                            // found matching o, does it's x/s also exist in x list
+                            if(xList.contains(tItem.s)){
+                                hCount++;
+                                tPtr++;
+                                xPtr++;
+                            } else {
+                                tPtr++;
+                            }
+                        } else if (xItem < tItem.o){
+                            xPtr++;
+                        } else {
+                            tPtr++;
+                        }
+                    }
+                }
+            }
+            headCnt[tList.get(0).p] = hCount;
+        }
+
+        System.out.println("Support for Transitive Relations");
+        printArray(headCnt);
+
+        for (int i = 0; i < numPs; i++){
+            if (transitiveMsmt[i] != 0){
+                transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
+            }
+        }
+        System.out.println("Transitive Measurements (Head Coverage): ");
+        printArray(transitiveMsmt);
+
+        return transitiveMsmt;
     }
 
 
@@ -530,13 +820,54 @@ public class Anomaly {
      * @param cartesian Cartesian product anomaly values for each p
      * @return list of overal anomaly coefficient for each p value
      */
-    public static double[] findOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian){
+    public static double[] findOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian,
+        double[] reflexive, double[] transitive, double[] duplicate, double[] symmetric){
+
         int numPs = nearSame.length;
         double[] result = new double[numPs];
+        ArrayList<String> resultDetails = new ArrayList<>();
+        
+        // for each p, find greatest value and type
         for (int i = 0; i < numPs; i++){
-            // overall anomaly coefficient is the greatest of the three anomalies for this p
-            result[i] = Double.max(Double.max(nearSame[i], nearReverse[i]), cartesian[i]);
+            String maxType = "None";
+            double maxVal = 0.0;
+            if (nearSame[i] > maxVal){
+                maxVal = nearSame[i];
+                maxType = "N-Dup";
+            }
+            if (nearReverse[i] > maxVal){
+                maxVal = nearReverse[i];
+                maxType = "N-Rev";
+            }
+            if (cartesian[i] > maxVal){
+                maxVal = cartesian[i];
+                maxType = "Cart";
+            }
+            if (reflexive[i] > maxVal){
+                maxVal = reflexive[i];
+                maxType = "Ref";
+            }
+            if (transitive[i] > maxVal){
+                maxVal = transitive[i];
+                maxType = "Tr";
+            }
+            if (duplicate[i] > maxVal){
+                maxVal = duplicate[i];
+                maxType = "Dup";
+            }
+            if (symmetric[i] > maxVal){
+                maxVal = symmetric[i];
+                maxType = "Sym";
+            }
+
+            result[i] = maxVal;
+            String details = maxType + " : " + String.format("%.3f", maxVal);
+            resultDetails.add(details);
+
         }
+        System.out.println("Overall Anomaly Information: ");
+        System.out.println(resultDetails);
+
         return result;
     }
 
@@ -597,12 +928,15 @@ public class Anomaly {
         HashMap<Integer, ArrayList<Triple>> reflexiveMap = new HashMap<>();
         Comparator<Triple> rc = new CompareTriple();
         ArrayList<Triple> rp0 = new ArrayList<>();
+        // 6 transitive
         Collections.addAll(rp0, 
-            new Triple(20,72,2), new Triple(72, 10, 2), 
-            new Triple(20, 10, 2), new Triple(42, 34, 2));
+            new Triple(103,3513,0), new Triple( 103,6835,0), 
+            new Triple(3513, 103,0), new Triple( 3513,6835,0), 
+            new Triple(6835,103,0), new Triple(6835, 3513, 0));
         rp0.sort(rc);
         reflexiveMap.put(2, rp0);
         ArrayList<Triple> rp1 = new ArrayList<>();
+        // 3 transitive
         Collections.addAll(rp1, 
             new Triple(12, 13, 1), new Triple(13,14,1), 
             new Triple(20,40,1), new Triple(20,12,1), 
@@ -611,13 +945,14 @@ public class Anomaly {
         rp1.sort(c);
         reflexiveMap.put(1, rp1);
         ArrayList<Triple> rp2 = new ArrayList<>();
-        Collections.addAll(rp2, 
-            new Triple(103,3513,0), new Triple( 103,6835,0), 
-            new Triple(3513, 103,0), new Triple( 3513,6835,0), 
-            new Triple(6835,103,0), new Triple(6835, 3513, 0));
+        // 1 transitive
+        Collections.addAll(rp2,
+            new Triple(20,72,2), new Triple(72, 10, 2), 
+            new Triple(20, 10, 2), new Triple(42, 34, 2));
         rp2.sort(c);
         reflexiveMap.put(0, rp2);
         ArrayList<Triple> rp3 = new ArrayList<>();
+        // 10 transitive
         Collections.addAll(rp3,
             new Triple(14, 86, 3), new Triple(14, 25, 3), new Triple(86, 14, 3),
             new Triple(320, 14, 3), new Triple(25, 14, 3), new Triple(14, 320, 3),
@@ -625,13 +960,15 @@ public class Anomaly {
             new Triple(320, 86, 3));
         rp3.sort(c);
         reflexiveMap.put(3, rp3);
-        // TODO remove
         ArrayList<Triple> rp4 = new ArrayList<>();
-        Collections.addAll(rp4,
-            new Triple(2, 1, 4));
+        // 0 transitive
+        Collections.addAll(rp4, 
+            new Triple(1, 2, 4), new Triple(1, 2, 4), 
+            new Triple(1, 4, 4), new Triple(1, 4, 4));
         rp4.sort(c);
         reflexiveMap.put(4, rp4);
         ArrayList<Triple> rp5 = new ArrayList<>();
+        // 3 transitive
         Collections.addAll(rp5,
             new Triple(2, 1, 5), new Triple(2, 3, 5), new Triple(2, 4, 5),
             new Triple(2, 5, 5), new Triple(4, 2, 5), new Triple(4, 3, 5),
@@ -641,6 +978,10 @@ public class Anomaly {
         
         
         System.out.println(reflexiveMap);
-        findTransitive(reflexiveMap);
+        findTransitive(reflexiveMap, 6);
+        newTransitive(reflexiveMap, 6);
+        //oneToMany(reflexiveMap, 6);
+        //manyToOne(reflexiveMap, 6);
+        //findCartesianProduct(reflexiveMap);
     }
 }

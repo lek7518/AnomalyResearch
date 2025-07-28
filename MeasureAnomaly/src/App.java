@@ -50,7 +50,7 @@ public class App {
                 while(scan.hasNextLine()){
                     String[] nums = scan.nextLine().split("[\t ]");
                     Triple t = new Triple(nums);
-                    if(pCount < numPs){
+                    if(pCount <= numPs){
                         if (dataMap.get(t.p) == null){
                             dataMap.put(t.p, new ArrayList<Triple>());
                             dataMap.get(t.p).add(t);
@@ -219,6 +219,7 @@ public class App {
         return quantity;
     }
 
+/*
     public static void printHistogramCounts(String currFolder, int numPs){
         var map = parseHashMap(currFolder, numPs, 1, 1, 1);
         var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
@@ -239,10 +240,10 @@ public class App {
         System.out.print("test_counts = ");
         Anomaly.printArray(histogramMapValues(anomalies, testMap, 5));
     }
-
+*/
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18RR";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K237";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -253,16 +254,62 @@ public class App {
         System.out.println("\nTraining set:");
         var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
         System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
-        Anomaly.findNearSame(trainMap, numPs);
-        Anomaly.findNearReverse(trainMap, numPs); 
-        Anomaly.findCartesianProduct(trainMap); 
-        Anomaly.findReflexive(trainMap);
-        //var startTime = System.currentTimeMillis();
-        Anomaly.findSymmetric(trainMap);
-        //var stopTime = System.currentTimeMillis();
-        //System.out.println("Elapsed time to find symmetric relations: " + (stopTime-startTime));
-        Anomaly.findDuplicate(trainMap);
-        Anomaly.findTransitive(trainMap);
+
+        var startTime = System.currentTimeMillis();
+        Anomaly.findTransitive(trainMap, numPs);
+        var stopTime = System.currentTimeMillis();
+        System.out.println("Elapsed time to find transitive relations (old way): " + (stopTime-startTime) + " milliseconds");
+
+        startTime = System.currentTimeMillis();
+        Anomaly.newTransitive(trainMap, numPs);
+        stopTime = System.currentTimeMillis();
+        System.out.println("Elapsed time to find transitive relations (new way): " + (stopTime-startTime) + " milliseconds");
+
+        /*
+        Anomaly.findOverallAnomaly(
+            Anomaly.findNearSame(trainMap, numPs),
+            Anomaly.findNearReverse(trainMap, numPs), 
+            Anomaly.findCartesianProduct(trainMap),
+            Anomaly.findReflexive(trainMap, numPs),
+            Anomaly.findTransitive(trainMap, numPs),
+            Anomaly.findDuplicate(trainMap, numPs),
+            Anomaly.findSymmetric(trainMap, numPs));
+*/
+
+        /*
+        var cart = Anomaly.findCartesianProduct(trainMap);
+        var otm = Anomaly.oneToMany(trainMap, numPs);
+        var mto = Anomaly.manyToOne(trainMap, numPs);
+
+        //System.out.println("Top 1:N and N:1 scores for comparison");
+        //System.out.println("Top Cartesian Product scores for comparison:");
+        int bigScoreCnt = 0;
+        int cartCnt = 0;
+        int zeroCnt = 0;
+        for (int i = 0; i < trainMap.size(); i++){
+            if (cart[i] > 0.7){
+                //System.out.println("[p " + i + "; CP " + cart[i]+ ", 1:N " + otm[i] + ", N:1 " + mto[i] + "]");
+                //String.format("%.3f", result[i])
+            }
+            if (otm[i] > 0.99 && mto[i] > 0.99){
+                //System.out.println("[p " + String.format("%4d", i) + "; CP " + String.format("%.3f", cart[i]) + ", 1:N " + String.format("%.3f", otm[i])                 + ", N:1 " + String.format("%.3f", mto[i]) + "]");
+            }
+            if (cart[i] > 0.7 && otm[i] > 0.7 && mto[i] > 0.7){
+                bigScoreCnt++;
+            }
+            if (cart[i] > 0.7){
+                cartCnt++;
+                if (otm[i] == 0.0 || mto[i] == 0.0){
+                    zeroCnt++;
+                }
+            }
+        }
+        System.out.println("Ratio of predicates with CP > 0.7, 1:N > 0.7, N:1 > 0.7: " + bigScoreCnt + " / " + trainMap.size() + " = " + (bigScoreCnt*1.0/trainMap.size()));
+        System.out.println("Number of predicates with CP > 0.7: " + cartCnt);
+        System.out.println("Number of CP > 0.7 where N:1 or 1:N is 0.0: " + zeroCnt);
+*/
+        
+        
 /*
         System.out.println("\nValidation set:");
         var validMap = parseHashMap(currFolder, numPs, 0, 1, 0);
