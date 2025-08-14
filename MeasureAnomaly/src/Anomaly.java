@@ -115,8 +115,8 @@ public class Anomaly {
                 nearSameMsmt[i] = 1.0*maxP(nearSameCnt, i)/nearSameMsmt[i];
             }
         }
-        //System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
-        //printArray(nearSameMsmt);
+        System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
+        printArray(nearSameMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -176,8 +176,8 @@ public class Anomaly {
                 duplicateMsmt[i] = 1.0*duplicateCnt[i]/duplicateMsmt[i];
             }
         }
-        //System.out.println("Measurements for Duplicate Anomalies: ");
-        //printArray(duplicateMsmt);
+        System.out.println("Measurements for Duplicate Anomalies: ");
+        printArray(duplicateMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -224,8 +224,8 @@ public class Anomaly {
                 reflexiveMsmt[i] = 1.0*reflexiveCnt[i]/reflexiveMsmt[i];
             }
         }
-        //System.out.println("Measurements for Reflexive Anomalies: ");
-        //printArray(reflexiveMsmt);
+        System.out.println("Measurements for Reflexive Anomalies: ");
+        printArray(reflexiveMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -303,8 +303,8 @@ public class Anomaly {
                 nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
             }
         }
-        //System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
-        //printArray(nearRevMsmt);
+        System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
+        printArray(nearRevMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -379,8 +379,8 @@ public class Anomaly {
                 symmetricMsmt[i] = 1.0*symmetricCnt[i]/symmetricMsmt[i];
             }
         }
-        //System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
-        //printArray(symmetricMsmt);
+        System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
+        printArray(symmetricMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -452,6 +452,7 @@ public class Anomaly {
         }
 
         // printing results
+        
         int anomalyCount = 0;
         double cpSum = 0;
         System.out.println("\nCartesian Product factors for each p:");
@@ -469,11 +470,101 @@ public class Anomaly {
             } 
         }
         System.out.println("]");
-
+        
         // avg of Cartesian products for all p
         //System.out.println("Cartesian average is: " + cpSum/result.length);
         //System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
         return result;
+    }
+
+    
+    public static double[] findCartesianConfidence(HashMap<Integer, ArrayList<Triple>> dataMap){
+        // calculate the confidence of the following rule
+        // s->o' ^ s'->o => s->o  where o<>o' and s<>s'
+
+        // idea: put together all the possible combinations of s->o' and s'->o and see what s->o we get out of it (denominator)
+        // then check how many of the s->o exist (numerator)
+
+        int[] support = new int[dataMap.size()];
+        int[] denominator = new int[dataMap.size()];
+
+        // for each p
+        for (ArrayList<Triple> tList : dataMap.values()){
+            int currP = tList.get(0).p;
+            System.out.println("p: " + currP);
+            HashMap<Integer, ArrayList<Integer>> denomValues = new HashMap<>();
+
+            for (Triple t : tList){
+                for (Triple comp: tList){
+                    // if o<>o' and s<>s'
+                    if (!t.s.equals(comp.s) && !t.o.equals(comp.o)){
+                        // if s not seen before, add s->o
+                        if(denomValues.get(t.s) == null){
+                            denomValues.put(t.s, new ArrayList<Integer>());
+                            denomValues.get(t.s).add(comp.o);
+                            denominator[currP]++;
+                        // if o not seen before, add s->o
+                        } else if (!denomValues.get(t.s).contains(comp.o)){
+                            denomValues.get(t.s).add(comp.o);
+                            denominator[currP]++;
+                        }
+                    }
+                }
+            }
+
+            // see which s->o from the denominator exist in the data
+            /*
+            int ptr = 0;
+            for (var entry : denomValues.entrySet()){
+                Integer currS = entry.getKey();
+                ArrayList<Integer> oList = entry.getValue();
+                Collections.sort(oList);
+                while (ptr < tList.size()){
+                    Triple currTriple = tList.get(ptr);
+                    if (currTriple.s.equals(currS)){
+                        // look for samesies
+                        for (Integer currO : oList){
+                            if (currTriple.o.equals(currO)){
+                                support[currP]++;
+                            } else if (currTriple.o < currO){
+                                ptr++;
+                            } else {
+                                break;
+                            }
+                        }
+                    } else if (currTriple.s < currS){
+                        ptr++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            */
+            for (Triple t : tList){
+                if (denomValues.get(t.s) != null){
+                    if (denomValues.get(t.s).contains(t.o)){
+                        support[currP]++;
+                    }
+                }
+            }
+            System.out.print("Support: " + support[currP]);
+            System.out.print("; Denominator: " + denominator[currP]);
+            System.out.println("; Confidence: " + 1.0*support[currP]/denominator[currP]);
+        }
+
+        double[] confidence = new double[dataMap.size()];
+        for (int i = 0; i < support.length; i++){
+            confidence[i] = support[i]*1.0 / denominator[i];
+        }
+
+        System.out.println("Support: ");
+        printArray(support);
+        System.out.println("Denominator: ");
+        printArray(denominator);
+        System.out.println("Confidence: ");
+        printArray(confidence);
+
+        return confidence;
     }
 
 
@@ -531,8 +622,8 @@ public class Anomaly {
         }
 
         // printing results
-        //System.out.println("\nCounts (Support) for the 1:N Relations: ");
-        //printArray(counts);
+        System.out.println("\nCounts (Support) for the 1:N Relations: ");
+        printArray(counts);
 
         for (int i = 0; i < numPs; i++){
             if (measurements[i] != 0){
@@ -612,8 +703,8 @@ public class Anomaly {
         }
 
         // printing results
-        //System.out.println("\nCounts (Support) for the N:1 Relations: ");
-        //printArray(counts);
+        System.out.println("\nCounts (Support) for the N:1 Relations: ");
+        printArray(counts);
 
         for (int i = 0; i < numPs; i++){
             if (measurements[i] != 0){
@@ -708,8 +799,8 @@ public class Anomaly {
             headCnt[tList.get(0).p] = hCount;
         }
 
-        System.out.println("Support for Transitive Relations");
-        printArray(headCnt);
+        //System.out.println("Support for Transitive Relations");
+        //printArray(headCnt);
 
         for (int i = 0; i < numPs; i++){
             if (transitiveMsmt[i] != 0){
@@ -798,16 +889,16 @@ public class Anomaly {
             headCnt[tList.get(0).p] = hCount;
         }
 
-        System.out.println("Support for Transitive Relations");
-        printArray(headCnt);
+        //System.out.println("Support for Transitive Relations");
+        //printArray(headCnt);
 
         for (int i = 0; i < numPs; i++){
             if (transitiveMsmt[i] != 0){
                 transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
             }
         }
-        System.out.println("Transitive Measurements (Head Coverage): ");
-        printArray(transitiveMsmt);
+        //System.out.println("Transitive Measurements (Head Coverage): ");
+        //printArray(transitiveMsmt);
 
         return transitiveMsmt;
     }
@@ -818,7 +909,7 @@ public class Anomaly {
      * @param nearSame near-same anomaly values for each p
      * @param nearReverse near-reverse anomaly values for each p
      * @param cartesian Cartesian product anomaly values for each p
-     * @return list of overal anomaly coefficient for each p value
+     * @return list of overall anomaly coefficient for each p value
      */
     public static double[] findOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian,
         double[] reflexive, double[] transitive, double[] duplicate, double[] symmetric){
@@ -843,23 +934,23 @@ public class Anomaly {
                 maxVal = cartesian[i];
                 maxType = "Cart";
             }
-            if (reflexive[i] > maxVal){
-                maxVal = reflexive[i];
-                maxType = "Ref";
-            }
             if (transitive[i] > maxVal){
                 maxVal = transitive[i];
                 maxType = "Tr";
-            }
-            if (duplicate[i] > maxVal){
-                maxVal = duplicate[i];
-                maxType = "Dup";
             }
             if (symmetric[i] > maxVal){
                 maxVal = symmetric[i];
                 maxType = "Sym";
             }
-
+            if (reflexive[i] > maxVal){
+                maxVal = reflexive[i];
+                maxType = "Ref";
+            }
+            if (duplicate[i] > maxVal){
+                maxVal = duplicate[i];
+                maxType = "Dup";
+            }
+            
             result[i] = maxVal;
             String details = maxType + " : " + String.format("%.3f", maxVal);
             resultDetails.add(details);
@@ -870,6 +961,109 @@ public class Anomaly {
 
         return result;
     }
+
+        /**
+     * Finds the overall anomaly coefficient for a list of p values.
+     * @param nearSame near-same anomaly values for each p
+     * @param nearReverse near-reverse anomaly values for each p
+     * @param cartesian Cartesian product anomaly values for each p
+     * @return list of overal anomaly coefficient for each p value
+     */
+    public static double[][] findOverallTypedAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian,
+        double[] reflexive, double[] transitive, double[] duplicate, double[] symmetric){
+
+        int numPs = nearSame.length;
+        // result with type: [[Type, Value], ...]
+        double[][] resultWithType = new double[numPs][2];
+        ArrayList<String> resultDetails = new ArrayList<>();
+        
+        // for each p, find greatest value and type
+        for (int i = 0; i < numPs; i++){
+            String maxType = "None";
+            double maxVal = 0.0;
+            int maxTypeVal = 0;
+            if (nearSame[i] > maxVal){
+                maxVal = nearSame[i];
+                maxType = "N-Dup";
+                maxTypeVal = 0;
+            }
+            if (nearReverse[i] > maxVal){
+                maxVal = nearReverse[i];
+                maxType = "N-Rev";
+                maxTypeVal = 1;
+            }
+            if (cartesian[i] > maxVal){
+                maxVal = cartesian[i];
+                maxType = "Cart";
+                maxTypeVal = 2;
+            }
+            if (transitive[i] > maxVal){
+                maxVal = transitive[i];
+                maxType = "Tr";
+                maxTypeVal = 3;
+            }
+            if (symmetric[i] > maxVal){
+                maxVal = symmetric[i];
+                maxType = "Sym";
+                maxTypeVal = 4;
+            }
+            if (reflexive[i] > maxVal){
+                maxVal = reflexive[i];
+                maxType = "Ref";
+                maxTypeVal = 5;
+            }
+            if (duplicate[i] > maxVal){
+                maxVal = duplicate[i];
+                maxType = "Dup";
+                maxTypeVal = 6;
+            }
+            
+            resultWithType[i][0] = maxTypeVal;
+            resultWithType[i][1] = maxVal;
+            String details = maxType + " : " + String.format("%.3f", maxVal);
+            resultDetails.add(details);
+
+        }
+        System.out.println("Overall Anomaly Information: ");
+        System.out.println(resultDetails);
+
+        return resultWithType;
+    }
+
+    public static double[] originalOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian){
+
+        int numPs = nearSame.length;
+        double[] result = new double[numPs];
+        ArrayList<String> resultDetails = new ArrayList<>();
+        
+        // for each p, find greatest value and type
+        for (int i = 0; i < numPs; i++){
+            String maxType = "None";
+            double maxVal = 0.0;
+            if (nearSame[i] > maxVal){
+                maxVal = nearSame[i];
+                maxType = "N-Dup";
+            }
+            if (nearReverse[i] > maxVal){
+                maxVal = nearReverse[i];
+                maxType = "N-Rev";
+            }
+            if (cartesian[i] > maxVal){
+                maxVal = cartesian[i];
+                maxType = "Cart";
+            }
+            
+            result[i] = maxVal;
+            String details = maxType + " : " + String.format("%.3f", maxVal);
+            resultDetails.add(details);
+
+        }
+        System.out.println("Original Overall Anomaly Information: ");
+        System.out.println(resultDetails);
+
+        return result;
+    }
+
 
 
     public static void main(String[] args){
@@ -977,9 +1171,10 @@ public class Anomaly {
         reflexiveMap.put(5, rp5);
         
         
-        System.out.println(reflexiveMap);
-        findTransitive(reflexiveMap, 6);
-        newTransitive(reflexiveMap, 6);
+        //System.out.println(reflexiveMap);
+        //findTransitive(reflexiveMap, 6);
+        //newTransitive(reflexiveMap, 6);
+        findCartesianConfidence(reflexiveMap);
         //oneToMany(reflexiveMap, 6);
         //manyToOne(reflexiveMap, 6);
         //findCartesianProduct(reflexiveMap);

@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
@@ -219,31 +220,83 @@ public class App {
         return quantity;
     }
 
-/*
-    public static void printHistogramCounts(String currFolder, int numPs){
+
+    public static void printHistogramCounts(String currFolder, int numPs, int numBuckets){
         var map = parseHashMap(currFolder, numPs, 1, 1, 1);
         var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
         var testMap = parseHashMap(currFolder, numPs, false, false, true);
         var validMap = parseHashMap(currFolder, numPs, false, true, false);
 
         double[] anomalies = Anomaly.findOverallAnomaly(Anomaly.findNearSame(map, numPs), 
-            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map));
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map), Anomaly.findReflexive(map, numPs),
+            Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
 
         System.out.print("p_counts = ");
-        Anomaly.printArray(histogramValues(anomalies, 5));
+        Anomaly.printArray(histogramValues(anomalies, numBuckets));
         System.out.print("all_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, map, 5));
+        Anomaly.printArray(histogramMapValues(anomalies, map, numBuckets));
         System.out.print("train_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, trainMap, 5));
+        Anomaly.printArray(histogramMapValues(anomalies, trainMap, numBuckets));
         System.out.print("valid_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, validMap, 5));
+        Anomaly.printArray(histogramMapValues(anomalies, validMap, numBuckets));
         System.out.print("test_counts = ");
-        Anomaly.printArray(histogramMapValues(anomalies, testMap, 5));
+        Anomaly.printArray(histogramMapValues(anomalies, testMap, numBuckets));
     }
-*/
+
+    
+    public static void percentPerAnomaly(String currFolder, int numPs){
+        int numAnomalies = 6;
+        
+        // anomalyValues = [anomaly type][bucket]
+        // anomaly types: [near-duplicate, near-reverse, cartesian, transitive, symmetric, reflexive]
+        // buckets: [0-.25, .25-.5, .5-.75, .75-1] 
+        int[][] anomalyValues = new int[numAnomalies][4];
+
+        var map = parseHashMap(currFolder, numPs, 0, 0, 1);
+        int[] pSizes = new int[numPs];
+        double totalSize = 0.0;
+        for (Map.Entry<Integer, ArrayList<Triple>> entry : map.entrySet()){
+            int p = entry.getKey();
+            var pList = entry.getValue();
+            pSizes[p] = pList.size();
+            totalSize += pSizes[p];
+        }
+
+        double[][] anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map), Anomaly.findReflexive(map, numPs),
+            Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
+
+        for (int i = 0; i < numPs; i++){
+            int type = (int)anomalies[i][0];
+            double value = anomalies[i][1];
+            if (value < 0.25){
+                anomalyValues[type][0] += (int)(pSizes[i]/totalSize*100);
+            } else if (value >= 0.25 && value < 0.5){
+                anomalyValues[type][1] += (int)(pSizes[i]/totalSize*100);
+            } else if (value >= 0.5 && value < 0.75){ 
+                anomalyValues[type][2] += (int)(pSizes[i]/totalSize*100);
+            } else {
+                anomalyValues[type][3] += (int)(pSizes[i]/totalSize*100);
+            }
+        }
+
+        System.out.print("'All': [");
+        for (int j = 0; j < numAnomalies; j++){
+            if (j != 0){ System.out.print(", "); }
+            System.out.print("[" + anomalyValues[j][0] + ", " + anomalyValues[j][1] + ", " + anomalyValues[j][2] + ", " + anomalyValues[j][3] + "]" );
+        }
+        System.out.println("]");
+
+        /*
+        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
+        var testMap = parseHashMap(currFolder, numPs, false, false, true);
+        var validMap = parseHashMap(currFolder, numPs, false, true, false);
+        */
+    }
+
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB15K237";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -251,30 +304,37 @@ public class App {
         System.out.println("Number of relations P: " + numPs);
 
         
-        System.out.println("\nTraining set:");
-        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
-        System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
+        var map  = parseHashMap(currFolder, numPs, true, true, true);
+        
+        //System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
 
-        var startTime = System.currentTimeMillis();
-        Anomaly.findTransitive(trainMap, numPs);
-        var stopTime = System.currentTimeMillis();
-        System.out.println("Elapsed time to find transitive relations (old way): " + (stopTime-startTime) + " milliseconds");
-
-        startTime = System.currentTimeMillis();
-        Anomaly.newTransitive(trainMap, numPs);
-        stopTime = System.currentTimeMillis();
-        System.out.println("Elapsed time to find transitive relations (new way): " + (stopTime-startTime) + " milliseconds");
+        //printHistogramCounts(currFolder, numPs, 4);
+        Anomaly.findCartesianConfidence(map);
+        Anomaly.findCartesianProduct(map);
+   
+        /*
+        Anomaly.findNearSame(map, numPs);
+        Anomaly.findNearReverse(map, numPs); 
+        Anomaly.findTransitive(map, numPs);
+        Anomaly.findSymmetric(map, numPs);
+        Anomaly.findReflexive(map, numPs);
+        Anomaly.findDuplicate(map, numPs);
+        
+        Anomaly.oneToMany(map, numPs);
+        Anomaly.manyToOne(map, numPs);
+*/
+        //percentPerAnomaly(currFolder, numPs);
 
         /*
         Anomaly.findOverallAnomaly(
-            Anomaly.findNearSame(trainMap, numPs),
-            Anomaly.findNearReverse(trainMap, numPs), 
-            Anomaly.findCartesianProduct(trainMap),
-            Anomaly.findReflexive(trainMap, numPs),
-            Anomaly.findTransitive(trainMap, numPs),
-            Anomaly.findDuplicate(trainMap, numPs),
-            Anomaly.findSymmetric(trainMap, numPs));
-*/
+            Anomaly.findNearSame(map, numPs),
+            Anomaly.findNearReverse(map, numPs), 
+            Anomaly.findCartesianProduct(map),
+            Anomaly.findReflexive(map, numPs),
+            Anomaly.findTransitive(map, numPs),
+            Anomaly.findDuplicate(map, numPs),
+            Anomaly.findSymmetric(map, numPs));
+        */
 
         /*
         var cart = Anomaly.findCartesianProduct(trainMap);
@@ -309,22 +369,5 @@ public class App {
         System.out.println("Number of CP > 0.7 where N:1 or 1:N is 0.0: " + zeroCnt);
 */
         
-        
-/*
-        System.out.println("\nValidation set:");
-        var validMap = parseHashMap(currFolder, numPs, 0, 1, 0);
-        System.out.println(testMap(validMap, currFolder + "/valid2id.txt")); 
-        Anomaly.findNearSame(validMap, numPs);
-        Anomaly.findNearReverse(validMap, numPs); 
-        Anomaly.findCartesianProduct(validMap);    
-
-        System.out.println("\nTest set:");
-        var testMap = parseHashMap(currFolder, numPs, false, false, true);
-        System.out.println(testMap(testMap, currFolder + "/test2id.txt")); 
-        Anomaly.findNearSame(testMap, numPs);
-        Anomaly.findNearReverse(testMap, numPs); 
-        Anomaly.findCartesianProduct(testMap);
-*/
-        //printHistogramCounts(currFolder, numPs);
     }
 }
