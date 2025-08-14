@@ -115,8 +115,8 @@ public class Anomaly {
                 nearSameMsmt[i] = 1.0*maxP(nearSameCnt, i)/nearSameMsmt[i];
             }
         }
-        System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
-        printArray(nearSameMsmt);
+        //System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
+        //printArray(nearSameMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -129,7 +129,7 @@ public class Anomaly {
         // only consider the number of ps we actually have for the average, not numPs
         avg = avg / dataMap.size();
         //System.out.println("Average Near-Same Value: " + avg);
-        System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
+        //System.out.println("Number of near-same anomalies past .99 threshold: " + anomalyCount);
         return nearSameMsmt;
     }
 
@@ -176,8 +176,8 @@ public class Anomaly {
                 duplicateMsmt[i] = 1.0*duplicateCnt[i]/duplicateMsmt[i];
             }
         }
-        System.out.println("Measurements for Duplicate Anomalies: ");
-        printArray(duplicateMsmt);
+        //System.out.println("Measurements for Duplicate Anomalies: ");
+        //printArray(duplicateMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -224,8 +224,8 @@ public class Anomaly {
                 reflexiveMsmt[i] = 1.0*reflexiveCnt[i]/reflexiveMsmt[i];
             }
         }
-        System.out.println("Measurements for Reflexive Anomalies: ");
-        printArray(reflexiveMsmt);
+        //System.out.println("Measurements for Reflexive Anomalies: ");
+        //printArray(reflexiveMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -303,8 +303,8 @@ public class Anomaly {
                 nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
             }
         }
-        System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
-        printArray(nearRevMsmt);
+        //System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
+        //printArray(nearRevMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -379,8 +379,8 @@ public class Anomaly {
                 symmetricMsmt[i] = 1.0*symmetricCnt[i]/symmetricMsmt[i];
             }
         }
-        System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
-        printArray(symmetricMsmt);
+        //System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
+        //printArray(symmetricMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -403,18 +403,15 @@ public class Anomaly {
      * @param dataMap The map (representing a graph) to search in.
      * @return the final measurement for each p
      */
-    public static double[] findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap){
+    public static double[] findCartesianProduct(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // WWW measurement for Cartesian product anomalies: 
             // total triples / (unique subjects * unique objects)
-        double[] result = new double[dataMap.size()];
-        int currIndex = 0;
+        double[] result = new double[numPs];
         for (ArrayList<Triple> tList : dataMap.values()){
+            int currIndex = tList.get(0).p;
+
             // total number of triples with predicate p
             int total = tList.size();
-
-            if (tList.get(0).p.equals(55)){
-                System.out.print(".");
-            }
 
             // number of unique subjects with p
             int subjects = 1;
@@ -448,11 +445,10 @@ public class Anomaly {
             if (subjects*objects != 0){
                 result[currIndex] = total*1.0/(subjects*objects);
             }
-            currIndex++;
         }
 
         // printing results
-        
+        /*
         int anomalyCount = 0;
         double cpSum = 0;
         System.out.println("\nCartesian Product factors for each p:");
@@ -470,7 +466,7 @@ public class Anomaly {
             } 
         }
         System.out.println("]");
-        
+        */
         // avg of Cartesian products for all p
         //System.out.println("Cartesian average is: " + cpSum/result.length);
         //System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
@@ -807,8 +803,8 @@ public class Anomaly {
                 transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
             }
         }
-        System.out.println("Transitive Measurements (Head Coverage): ");
-        printArray(transitiveMsmt);
+        //System.out.println("Transitive Measurements (Head Coverage): ");
+        //printArray(transitiveMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -1024,8 +1020,8 @@ public class Anomaly {
             resultDetails.add(details);
 
         }
-        System.out.println("Overall Anomaly Information: ");
-        System.out.println(resultDetails);
+        //System.out.println("Overall Anomaly Information: ");
+        //System.out.println(resultDetails);
 
         return resultWithType;
     }
@@ -1177,6 +1173,6 @@ public class Anomaly {
         findCartesianConfidence(reflexiveMap);
         //oneToMany(reflexiveMap, 6);
         //manyToOne(reflexiveMap, 6);
-        //findCartesianProduct(reflexiveMap);
+        //findCartesianProduct(reflexiveMap, 6);
     }
 }

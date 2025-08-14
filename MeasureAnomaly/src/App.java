@@ -190,6 +190,7 @@ public class App {
         return quantity;
     }
 
+
     /**
      * Sorts each triple into a "bucket" based on p value for use in a histogram. 
      * Assumes all p values are between 0 and 1.
@@ -228,7 +229,7 @@ public class App {
         var validMap = parseHashMap(currFolder, numPs, false, true, false);
 
         double[] anomalies = Anomaly.findOverallAnomaly(Anomaly.findNearSame(map, numPs), 
-            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map), Anomaly.findReflexive(map, numPs),
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
             Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
 
         System.out.print("p_counts = ");
@@ -244,59 +245,56 @@ public class App {
     }
 
     
-    public static void percentPerAnomaly(String currFolder, int numPs){
+    public static void percentPerAnomaly(HashMap<Integer, ArrayList<Triple>> map, int numPs, String label){
         int numAnomalies = 6;
         
         // anomalyValues = [anomaly type][bucket]
         // anomaly types: [near-duplicate, near-reverse, cartesian, transitive, symmetric, reflexive]
         // buckets: [0-.25, .25-.5, .5-.75, .75-1] 
-        int[][] anomalyValues = new int[numAnomalies][4];
+        double[][] anomalyValues = new double[numAnomalies][4];
 
-        var map = parseHashMap(currFolder, numPs, 0, 0, 1);
+        //var map = parseHashMap(currFolder, numPs, 1, 0, 0);
         int[] pSizes = new int[numPs];
         double totalSize = 0.0;
         for (Map.Entry<Integer, ArrayList<Triple>> entry : map.entrySet()){
             int p = entry.getKey();
-            var pList = entry.getValue();
-            pSizes[p] = pList.size();
+            if (label.equals("p")){
+                pSizes[p] = 1;
+            } else {
+                pSizes[p] = entry.getValue().size();
+            }            
             totalSize += pSizes[p];
         }
 
         double[][] anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
-            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map), Anomaly.findReflexive(map, numPs),
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
             Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
 
         for (int i = 0; i < numPs; i++){
             int type = (int)anomalies[i][0];
             double value = anomalies[i][1];
             if (value < 0.25){
-                anomalyValues[type][0] += (int)(pSizes[i]/totalSize*100);
+                anomalyValues[type][0] += (pSizes[i]/totalSize*100);
             } else if (value >= 0.25 && value < 0.5){
-                anomalyValues[type][1] += (int)(pSizes[i]/totalSize*100);
+                anomalyValues[type][1] += (pSizes[i]/totalSize*100);
             } else if (value >= 0.5 && value < 0.75){ 
-                anomalyValues[type][2] += (int)(pSizes[i]/totalSize*100);
+                anomalyValues[type][2] += (pSizes[i]/totalSize*100);
             } else {
-                anomalyValues[type][3] += (int)(pSizes[i]/totalSize*100);
+                anomalyValues[type][3] += (pSizes[i]/totalSize*100);
             }
         }
 
-        System.out.print("'All': [");
+        System.out.print("'" + label + "': [");
         for (int j = 0; j < numAnomalies; j++){
             if (j != 0){ System.out.print(", "); }
             System.out.print("[" + anomalyValues[j][0] + ", " + anomalyValues[j][1] + ", " + anomalyValues[j][2] + ", " + anomalyValues[j][3] + "]" );
         }
-        System.out.println("]");
-
-        /*
-        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
-        var testMap = parseHashMap(currFolder, numPs, false, false, true);
-        var validMap = parseHashMap(currFolder, numPs, false, true, false);
-        */
+        System.out.println("],");
     }
 
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/WN18";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB13";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -305,13 +303,17 @@ public class App {
 
         
         var map  = parseHashMap(currFolder, numPs, true, true, true);
-        
-        //System.out.println(testMap(trainMap, currFolder + "/train2id.txt")); 
-
+        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
+        var testMap = parseHashMap(currFolder, numPs, false, false, true);
+        var validMap = parseHashMap(currFolder, numPs, false, true, false);
+        percentPerAnomaly(map, numPs, "p");
+        percentPerAnomaly(map, numPs, "All");
+        percentPerAnomaly(trainMap, numPs, "Train");
+        percentPerAnomaly(validMap, numPs, "Valid");
+        percentPerAnomaly(testMap, numPs, "Test");
+        //System.out.println(testMap(trainMap, currFolder + "/train2id.txt"));
         //printHistogramCounts(currFolder, numPs, 4);
-        Anomaly.findCartesianConfidence(map);
-        Anomaly.findCartesianProduct(map);
-   
+       
         /*
         Anomaly.findNearSame(map, numPs);
         Anomaly.findNearReverse(map, numPs); 
@@ -319,17 +321,17 @@ public class App {
         Anomaly.findSymmetric(map, numPs);
         Anomaly.findReflexive(map, numPs);
         Anomaly.findDuplicate(map, numPs);
-        
+        Anomaly.findCartesianConfidence(map);
+        Anomaly.findCartesianProduct(map, numPs);
         Anomaly.oneToMany(map, numPs);
         Anomaly.manyToOne(map, numPs);
-*/
-        //percentPerAnomaly(currFolder, numPs);
+        */
 
         /*
         Anomaly.findOverallAnomaly(
             Anomaly.findNearSame(map, numPs),
             Anomaly.findNearReverse(map, numPs), 
-            Anomaly.findCartesianProduct(map),
+            Anomaly.findCartesianProduct(map, numPs),
             Anomaly.findReflexive(map, numPs),
             Anomaly.findTransitive(map, numPs),
             Anomaly.findDuplicate(map, numPs),
@@ -337,7 +339,7 @@ public class App {
         */
 
         /*
-        var cart = Anomaly.findCartesianProduct(trainMap);
+        var cart = Anomaly.findCartesianProduct(trainMap, numPs);
         var otm = Anomaly.oneToMany(trainMap, numPs);
         var mto = Anomaly.manyToOne(trainMap, numPs);
 
