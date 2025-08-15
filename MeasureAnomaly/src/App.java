@@ -245,7 +245,7 @@ public class App {
     }
 
     
-    public static void percentPerAnomaly(HashMap<Integer, ArrayList<Triple>> map, int numPs, String label){
+    public static void percentPerAnomaly(double[][] anomalies, HashMap<Integer, ArrayList<Triple>> map, int numPs, String label){
         int numAnomalies = 6;
         
         // anomalyValues = [anomaly type][bucket]
@@ -265,12 +265,9 @@ public class App {
             }            
             totalSize += pSizes[p];
         }
-
-        double[][] anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
-            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
-            Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
-
-        for (int i = 0; i < numPs; i++){
+        
+        for (Map.Entry<Integer, ArrayList<Triple>> entry : map.entrySet()){
+            int i = entry.getKey();
             int type = (int)anomalies[i][0];
             double value = anomalies[i][1];
             if (value < 0.25){
@@ -294,7 +291,7 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/FB13";
+        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/NELL-995";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
         int numPs = Integer.valueOf(scan.nextLine());
@@ -303,14 +300,19 @@ public class App {
 
         
         var map  = parseHashMap(currFolder, numPs, true, true, true);
+        double[][] anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
+            Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
+
         var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
         var testMap = parseHashMap(currFolder, numPs, false, false, true);
         var validMap = parseHashMap(currFolder, numPs, false, true, false);
-        percentPerAnomaly(map, numPs, "p");
-        percentPerAnomaly(map, numPs, "All");
-        percentPerAnomaly(trainMap, numPs, "Train");
-        percentPerAnomaly(validMap, numPs, "Valid");
-        percentPerAnomaly(testMap, numPs, "Test");
+        percentPerAnomaly(anomalies, map, numPs, "p");
+        percentPerAnomaly(anomalies, map, numPs, "All");
+        percentPerAnomaly(anomalies, trainMap, numPs, "Train");
+        percentPerAnomaly(anomalies, validMap, numPs, "Valid");
+        percentPerAnomaly(anomalies, testMap, numPs, "Test");
+        
         //System.out.println(testMap(trainMap, currFolder + "/train2id.txt"));
         //printHistogramCounts(currFolder, numPs, 4);
        
