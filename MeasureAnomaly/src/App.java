@@ -45,12 +45,72 @@ public class App {
             for (String filename : filenames){
                 File f = new File(dataFolder + filename);
                 Scanner scan = new Scanner(f);
-                //int n = Integer.valueOf(scan.nextLine());
                 System.out.println("Adding " + scan.nextLine() + " triples to a new hash map from " + f.getName());
                 int pCount = 0;
                 while(scan.hasNextLine()){
                     String[] nums = scan.nextLine().split("[\t ]");
+                    // for files with (s, o, p) format
                     Triple t = new Triple(nums);
+                    if(pCount <= numPs){
+                        if (dataMap.get(t.p) == null){
+                            dataMap.put(t.p, new ArrayList<Triple>());
+                            dataMap.get(t.p).add(t);
+                            pCount++;
+                        } else {
+                            dataMap.get(t.p).add(t);
+                        }
+                    } else {
+                        dataMap.get(t.p).add(t);
+                    }
+                }
+            
+                scan.close();
+            }
+        }
+        catch (FileNotFoundException ex){
+            System.out.println("Cannot find file in " + dataFolder + ": " + ex);
+        }
+
+        for (ArrayList<Triple> list : dataMap.values()){
+            Comparator<Triple> comp = new CompareTriple();
+            list.sort(comp);
+        }
+
+        return dataMap;
+    }
+
+
+    /**
+     * Takes in a folder that contains files with training, 
+     * and test triples and creates a hash map for other experimental data
+     * @return hash map with predicate as the key, value is an ArrayList of Triples
+     */
+    public static HashMap<Integer, ArrayList<Triple>> parseExperimentalHashMap(
+        String dataFolder, int numPs, boolean train, boolean valid, boolean test){
+        HashMap<Integer, ArrayList<Triple>> dataMap = new HashMap<>();
+        try{
+            ArrayList<String> filenames = new ArrayList<>();
+            if (train){
+                //filenames.add("/train2id.txt");
+                filenames.add("/train.txt");
+            }
+            if (valid){
+                filenames.add("/valid2id.txt");
+            }
+            if (test){
+                //filenames.add("/test2id.txt");
+                filenames.add("/test.txt");
+            }
+            for (String filename : filenames){
+                File f = new File(dataFolder + filename);
+                Scanner scan = new Scanner(f);
+                int pCount = 0;
+                while(scan.hasNextLine()){
+                    String[] nums = scan.nextLine().split("[\t ]");
+                    // for files with (s, o, p) format
+                    // Triple t = new Triple(nums);
+                    // for files with (s, p, o) format
+                    Triple t = new Triple(Integer.valueOf(nums[0]), Integer.valueOf(nums[2]), Integer.valueOf(nums[1]));
                     if(pCount <= numPs){
                         if (dataMap.get(t.p) == null){
                             dataMap.put(t.p, new ArrayList<Triple>());
@@ -290,7 +350,82 @@ public class App {
     }
 
 
+    public static void printExperimentGraphData(String currDataset) {
+        String baseFolder = "C:/Users/lklec/AnomalyResearch/Datasets/";
+        String currFolder = baseFolder + currDataset;
+        int numPs = 0;
+        try {
+            File relationFile = new File(currFolder + "/relation2id.txt");
+            Scanner scan = new Scanner(relationFile);
+            numPs = Integer.valueOf(scan.nextLine());
+            scan.close();
+        } catch (Exception e) {
+            System.out.println("Relation file not found. Ex: " + e);
+        }
+        System.out.println("Number of relations P: " + numPs);
+        /*
+        // Data for original splits
+        var map  = parseHashMap(currFolder, numPs, true, true, true);
+        
+        double[][] anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
+            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
+            Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
+
+        var trainMap  = parseHashMap(currFolder, numPs, true, false, false); 
+        var testMap = parseHashMap(currFolder, numPs, false, false, true);
+        var validMap = parseHashMap(currFolder, numPs, false, true, false);
+        var trainValidMap = parseHashMap(currFolder, numPs, true, true, false);
+        
+        System.out.println("dataset_name = \"" + currDataset + " Original\"");
+        System.out.println("percents = {");
+        percentPerAnomaly(anomalies, map, numPs, "p");
+        percentPerAnomaly(anomalies, map, numPs, "All");
+        percentPerAnomaly(anomalies, trainValidMap, numPs, "Train");
+        percentPerAnomaly(anomalies, testMap, numPs, "Test");
+        System.out.println("}\n");
+
+        System.out.println("dataset_name = \"" + currDataset + " Original\"");
+        System.out.println("percents = {");
+        percentPerAnomaly(anomalies, map, numPs, "p");
+        percentPerAnomaly(anomalies, map, numPs, "All");
+        percentPerAnomaly(anomalies, trainMap, numPs, "Train");
+        percentPerAnomaly(anomalies, validMap, numPs, "Valid");
+        percentPerAnomaly(anomalies, testMap, numPs, "Test");
+        System.out.println("}\n");
+        */
+        // Data for new splits
+        // need to run epsilon_0_alpha_0.95, epsilon_1_alpha_0.05, epsilon_0_alpha_0.95
+        baseFolder = currFolder + "/experiments/";
+        try {
+            File base = new File(baseFolder);
+            String[] toRun = {"epsilon_1_alpha_0.95"};
+            //for (String currExperiment : base.list()){
+            for (String currExperiment : toRun){
+                System.out.println("dataset_name = \"" + currDataset + " " + currExperiment + "\"");
+                currFolder = baseFolder + currExperiment;
+                
+                var map  = parseExperimentalHashMap(currFolder, numPs, true, false, true);
+                var anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
+                    Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
+                    Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
+                var trainMap  = parseExperimentalHashMap(currFolder, numPs, true, false, false);
+                var testMap = parseExperimentalHashMap(currFolder, numPs, false, false, true);
+                
+                System.out.println("percents = {");
+                percentPerAnomaly(anomalies, map, numPs, "p");
+                percentPerAnomaly(anomalies, map, numPs, "All");
+                percentPerAnomaly(anomalies, trainMap, numPs, "Train");
+                percentPerAnomaly(anomalies, testMap, numPs, "Test");
+                System.out.println("}\n");
+            }
+        } catch (Exception e) {
+            System.out.println("Issue with file " + baseFolder + "; Ex: " + e);
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
+        /*
         String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/NELL-995";
         File relationFile = new File(currFolder + "/relation2id.txt");
         Scanner scan = new Scanner(relationFile);
@@ -312,6 +447,8 @@ public class App {
         percentPerAnomaly(anomalies, trainMap, numPs, "Train");
         percentPerAnomaly(anomalies, validMap, numPs, "Valid");
         percentPerAnomaly(anomalies, testMap, numPs, "Test");
+        */
+        printExperimentGraphData("YAGO3-10");
         
         //System.out.println(testMap(trainMap, currFolder + "/train2id.txt"));
         //printHistogramCounts(currFolder, numPs, 4);
@@ -372,6 +509,5 @@ public class App {
         System.out.println("Number of predicates with CP > 0.7: " + cartCnt);
         System.out.println("Number of CP > 0.7 where N:1 or 1:N is 0.0: " + zeroCnt);
 */
-        
     }
 }

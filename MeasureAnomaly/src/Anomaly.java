@@ -115,8 +115,8 @@ public class Anomaly {
                 nearSameMsmt[i] = 1.0*maxP(nearSameCnt, i)/nearSameMsmt[i];
             }
         }
-        System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
-        printArray(nearSameMsmt);
+        // System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
+        // printArray(nearSameMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -176,8 +176,8 @@ public class Anomaly {
                 duplicateMsmt[i] = 1.0*duplicateCnt[i]/duplicateMsmt[i];
             }
         }
-        System.out.println("Measurements for Duplicate Anomalies: ");
-        printArray(duplicateMsmt);
+        // System.out.println("Measurements for Duplicate Anomalies: ");
+        // printArray(duplicateMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -224,8 +224,8 @@ public class Anomaly {
                 reflexiveMsmt[i] = 1.0*reflexiveCnt[i]/reflexiveMsmt[i];
             }
         }
-        System.out.println("Measurements for Reflexive Anomalies: ");
-        printArray(reflexiveMsmt);
+        // System.out.println("Measurements for Reflexive Anomalies: ");
+        // printArray(reflexiveMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -303,8 +303,8 @@ public class Anomaly {
                 nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
             }
         }
-        System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
-        printArray(nearRevMsmt);
+        // System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
+        // printArray(nearRevMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -379,8 +379,8 @@ public class Anomaly {
                 symmetricMsmt[i] = 1.0*symmetricCnt[i]/symmetricMsmt[i];
             }
         }
-        System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
-        printArray(symmetricMsmt);
+        // System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
+        // printArray(symmetricMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -448,7 +448,7 @@ public class Anomaly {
         }
 
         // printing results
-        
+        /*
         int anomalyCount = 0;
         double cpSum = 0;
         System.out.println("\nCartesian Product factors for each p:");
@@ -466,7 +466,7 @@ public class Anomaly {
             } 
         }
         System.out.println("]");
-        
+        */
         // avg of Cartesian products for all p
         //System.out.println("Cartesian average is: " + cpSum/result.length);
         //System.out.println("Number of Cartesian anomalies past .80 threshold: " + anomalyCount);
@@ -618,8 +618,8 @@ public class Anomaly {
         }
 
         // printing results
-        System.out.println("\nCounts (Support) for the 1:N Relations: ");
-        printArray(counts);
+        // System.out.println("\nCounts (Support) for the 1:N Relations: ");
+        // printArray(counts);
 
         for (int i = 0; i < numPs; i++){
             if (measurements[i] != 0){
@@ -627,8 +627,8 @@ public class Anomaly {
             }
         }
         
-        System.out.println("Measurements (Head Coverage) for 1:N Relations: ");
-        printArray(measurements);
+        // System.out.println("Measurements (Head Coverage) for 1:N Relations: ");
+        // printArray(measurements);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -699,8 +699,8 @@ public class Anomaly {
         }
 
         // printing results
-        System.out.println("\nCounts (Support) for the N:1 Relations: ");
-        printArray(counts);
+        // System.out.println("\nCounts (Support) for the N:1 Relations: ");
+        // printArray(counts);
 
         for (int i = 0; i < numPs; i++){
             if (measurements[i] != 0){
@@ -708,8 +708,8 @@ public class Anomaly {
             }
         }
         
-        System.out.println("Measurements (Head Coverage) for N:1 Relations: ");
-        printArray(measurements);
+        // System.out.println("Measurements (Head Coverage) for N:1 Relations: ");
+        // printArray(measurements);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -803,8 +803,8 @@ public class Anomaly {
                 transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
             }
         }
-        System.out.println("Transitive Measurements (Head Coverage): ");
-        printArray(transitiveMsmt);
+        // System.out.println("Transitive Measurements (Head Coverage): ");
+        // printArray(transitiveMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -893,8 +893,8 @@ public class Anomaly {
                 transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
             }
         }
-        System.out.println("Transitive Measurements (Head Coverage): ");
-        printArray(transitiveMsmt);
+        // System.out.println("Transitive Measurements (Head Coverage): ");
+        // printArray(transitiveMsmt);
 
         return transitiveMsmt;
     }
@@ -952,8 +952,8 @@ public class Anomaly {
             resultDetails.add(details);
 
         }
-        System.out.println("Overall Anomaly Information: ");
-        System.out.println(resultDetails);
+        // System.out.println("Overall Anomaly Information: ");
+        // System.out.println(resultDetails);
 
         return result;
     }
@@ -1021,8 +1021,8 @@ public class Anomaly {
             resultDetails.add(details);
 
         }
-        System.out.println("Overall Anomaly Information: ");
-        System.out.println(resultDetails);
+        // System.out.println("Overall Anomaly Information: ");
+        // System.out.println(resultDetails);
 
         return resultWithType;
     }
@@ -1055,8 +1055,8 @@ public class Anomaly {
             resultDetails.add(details);
 
         }
-        System.out.println("Original Overall Anomaly Information: ");
-        System.out.println(resultDetails);
+        // System.out.println("Original Overall Anomaly Information: ");
+        // System.out.println(resultDetails);
 
         return result;
     }
