@@ -31,19 +31,27 @@ public class App {
     public static HashMap<Integer, ArrayList<Triple>> parseHashMap(
         String dataFolder, int numPs, boolean train, boolean valid, boolean test){
         HashMap<Integer, ArrayList<Triple>> dataMap = new HashMap<>();
+        boolean isNell = false;
+        if (dataFolder.contains("NELL")){
+            isNell = true;
+        }
         try{
             ArrayList<String> filenames = new ArrayList<>();
             if (train){
-                filenames.add("/train2id.txt");
+                filenames.add("train2id.txt");
             }
             if (valid){
-                filenames.add("/valid2id.txt");
+                filenames.add("valid2id.txt");
             }
             if (test){
-                filenames.add("/test2id.txt");
+                filenames.add("test2id.txt");
             }
             for (String filename : filenames){
-                File f = new File(dataFolder + filename);
+                String additional = "/";
+                if (isNell) {
+                    additional += "resplit_";
+                }
+                File f = new File(dataFolder + additional + filename);
                 Scanner scan = new Scanner(f);
                 System.out.println("Adding " + scan.nextLine() + " triples to a new hash map from " + f.getName());
                 int pCount = 0;
@@ -425,20 +433,32 @@ public class App {
 
 
     public static void main(String[] args) throws Exception {
+        String baseFolder = "C:/Users/lklec/AnomalyResearch/Datasets/";
+        String[] datasets = {"BioKG", "FB13", "FB15K237", "Hetionet", "NELL-995", "WN11", "WN18", "WN18RR", "YAGO3-10"};
+
+        for (String dataset : datasets) {
+            System.out.println("Analyzing " + dataset + " for redundancies in training & validation.");
+            String currFolder = baseFolder + dataset;
+            File relationFile = new File(currFolder + "/relation2id.txt");
+            Scanner scan = new Scanner(relationFile);
+            int numPs = Integer.valueOf(scan.nextLine());
+            scan.close();
+            System.out.println("Number of predicates P: " + numPs);
+
+            var map = parseHashMap(currFolder, numPs, true, true, false);
+
+            //Find and print all anomaly measurements
+            Anomaly.findNearSame(map, numPs);
+            Anomaly.findNearReverse(map, numPs); 
+            Anomaly.findTransitive(map, numPs); 
+            Anomaly.findSymmetric(map, numPs);
+            Anomaly.manyToOne(map, numPs);
+            Anomaly.oneToMany(map, numPs);
+            Anomaly.findCartesianConfidence(map);
+
+            System.out.println();
+        }
         /*
-        String currFolder = "C:/Users/lklec/AnomalyResearch/Datasets/NELL-995";
-        File relationFile = new File(currFolder + "/relation2id.txt");
-        Scanner scan = new Scanner(relationFile);
-        int numPs = Integer.valueOf(scan.nextLine());
-        scan.close();
-        System.out.println("Number of relations P: " + numPs);
-
-        
-        var map  = parseHashMap(currFolder, numPs, true, true, true);
-        double[][] anomalies = Anomaly.findOverallTypedAnomaly(Anomaly.findNearSame(map, numPs), 
-            Anomaly.findNearReverse(map, numPs), Anomaly.findCartesianProduct(map, numPs), Anomaly.findReflexive(map, numPs),
-            Anomaly.findTransitive(map, numPs), Anomaly.findDuplicate(map, numPs), Anomaly.findSymmetric(map, numPs));
-
         var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
         var testMap = parseHashMap(currFolder, numPs, false, false, true);
         var validMap = parseHashMap(currFolder, numPs, false, true, false);
@@ -448,7 +468,7 @@ public class App {
         percentPerAnomaly(anomalies, validMap, numPs, "Valid");
         percentPerAnomaly(anomalies, testMap, numPs, "Test");
         */
-        printExperimentGraphData("YAGO3-10");
+        //printExperimentGraphData("YAGO3-10");
         
         //System.out.println(testMap(trainMap, currFolder + "/train2id.txt"));
         //printHistogramCounts(currFolder, numPs, 4);

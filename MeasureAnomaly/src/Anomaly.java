@@ -115,8 +115,8 @@ public class Anomaly {
                 nearSameMsmt[i] = 1.0*maxP(nearSameCnt, i)/nearSameMsmt[i];
             }
         }
-        // System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
-        // printArray(nearSameMsmt);
+        System.out.println("Measurements (Head Coverage) for Near-Same Anomalies: ");
+        printArray(nearSameMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -303,8 +303,8 @@ public class Anomaly {
                 nearRevMsmt[i] = 1.0*maxP(nearReverseCnt, i)/nearRevMsmt[i];
             }
         }
-        // System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
-        // printArray(nearRevMsmt);
+        System.out.println("Measurements (Head Coverage) for Near-Reverse Anomalies: ");
+        printArray(nearRevMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -379,8 +379,8 @@ public class Anomaly {
                 symmetricMsmt[i] = 1.0*symmetricCnt[i]/symmetricMsmt[i];
             }
         }
-        // System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
-        // printArray(symmetricMsmt);
+        System.out.println("Measurements (Head Coverage) for Symmetric Anomalies: ");
+        printArray(symmetricMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -487,7 +487,7 @@ public class Anomaly {
         // for each p
         for (ArrayList<Triple> tList : dataMap.values()){
             int currP = tList.get(0).p;
-            System.out.println("p: " + currP);
+            //System.out.println("p: " + currP);
             HashMap<Integer, ArrayList<Integer>> denomValues = new HashMap<>();
 
             for (Triple t : tList){
@@ -543,9 +543,9 @@ public class Anomaly {
                     }
                 }
             }
-            System.out.print("Support: " + support[currP]);
-            System.out.print("; Denominator: " + denominator[currP]);
-            System.out.println("; Confidence: " + 1.0*support[currP]/denominator[currP]);
+            //System.out.print("Support: " + support[currP]);
+            //System.out.print("; Denominator: " + denominator[currP]);
+            //System.out.println("; Confidence: " + 1.0*support[currP]/denominator[currP]);
         }
 
         double[] confidence = new double[dataMap.size()];
@@ -553,11 +553,11 @@ public class Anomaly {
             confidence[i] = support[i]*1.0 / denominator[i];
         }
 
-        System.out.println("Support: ");
-        printArray(support);
-        System.out.println("Denominator: ");
-        printArray(denominator);
-        System.out.println("Confidence: ");
+        // System.out.println(" Support: ");
+        // printArray(support);
+        // System.out.println("Denominator: ");
+        // printArray(denominator);
+        System.out.println("Measurements (Confidence) for Cartesian Product Anomalies:");
         printArray(confidence);
 
         return confidence;
@@ -572,9 +572,9 @@ public class Anomaly {
         for (ArrayList<Triple> tList : dataMap.values()){
             // count how many times the same subject appears in a different triple
             int p = tList.get(0).p;
-            if (p == 55){
-                System.out.println("hey");
-            }
+            // if (p == 55){
+            //     System.out.println("hey");
+            // }
             measurements[p] = tList.size();
             int curr = 0;
             while (curr < tList.size()){
@@ -627,8 +627,8 @@ public class Anomaly {
             }
         }
         
-        // System.out.println("Measurements (Head Coverage) for 1:N Relations: ");
-        // printArray(measurements);
+        System.out.println("Measurements (Head Coverage) for 1:N Relations: ");
+        printArray(measurements);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -708,8 +708,8 @@ public class Anomaly {
             }
         }
         
-        // System.out.println("Measurements (Head Coverage) for N:1 Relations: ");
-        // printArray(measurements);
+        System.out.println("Measurements (Head Coverage) for N:1 Relations: ");
+        printArray(measurements);
 
         int anomalyCount = 0;
         double avg = 0;
@@ -803,8 +803,8 @@ public class Anomaly {
                 transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
             }
         }
-        // System.out.println("Transitive Measurements (Head Coverage): ");
-        // printArray(transitiveMsmt);
+        System.out.println("Transitive Measurements (Head Coverage): ");
+        printArray(transitiveMsmt);
 
         int anomalyCount = 0;
         double avg = 0;
