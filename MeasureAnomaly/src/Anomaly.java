@@ -34,14 +34,15 @@ public class Anomaly {
     }
 
     public static void printArray(double[] array){
-        System.out.print("[");
+        //System.out.print("[");
         for (int i = 0; i < array.length; i++){
             if (i != 0){
                 System.out.print(", ");
             }
             System.out.print(String.format("%.3f", array[i]));
         }
-        System.out.println("]");
+        //System.out.println("]");
+        System.out.println();
     }
 
     public static void printArray(int[] array){
