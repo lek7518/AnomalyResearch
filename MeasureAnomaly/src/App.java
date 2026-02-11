@@ -434,8 +434,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         String baseFolder = "C:/Users/lklec/AnomalyResearch/Datasets/";
-        String[] datasets = {"BioKG", "FB13", "FB15K237", "Hetionet", "NELL-995", "WN11", "WN18", "WN18RR", "YAGO3-10"};
-
+        String[] datasets = {"BioKG", "FB13", "FB15K", "FB15K237", "Hetionet", "NELL-995", "WN11", "WN18", "WN18RR", "YAGO3-10"};
         for (String dataset : datasets) {
             System.out.println("Analyzing " + dataset + " for redundancies in training & validation.");
             String currFolder = baseFolder + dataset;

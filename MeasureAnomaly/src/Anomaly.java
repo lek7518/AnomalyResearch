@@ -2,7 +2,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Anomaly {
 
@@ -488,16 +490,30 @@ public class Anomaly {
         // for each p
         for (ArrayList<Triple> tList : dataMap.values()){
             int currP = tList.get(0).p;
+            int currO = tList.get(0).o;
+            boolean sameO = true;
+            int currS = tList.get(0).s;
+            boolean sameS = true;
             //System.out.println("p: " + currP);
-            HashMap<Integer, ArrayList<Integer>> denomValues = new HashMap<>();
+            HashMap<Integer, Set<Integer>> denomValues = new HashMap<>();
+
+            if (currP == 55){
+                System.out.println("woah there pardner");
+            }
 
             for (Triple t : tList){
+                // if (currO != t.o){ //TODO implement new rule when all s or all o are the same?
+                //     sameO=false;
+                // }
+                // if (currS != t.s){
+                //     sameS=false;
+                // }
                 for (Triple comp: tList){
                     // if o<>o' and s<>s'
                     if (!t.s.equals(comp.s) && !t.o.equals(comp.o)){
                         // if s not seen before, add s->o
                         if(denomValues.get(t.s) == null){
-                            denomValues.put(t.s, new ArrayList<Integer>());
+                            denomValues.put(t.s, new HashSet<Integer>());
                             denomValues.get(t.s).add(comp.o);
                             denominator[currP]++;
                         // if o not seen before, add s->o
@@ -544,14 +560,23 @@ public class Anomaly {
                     }
                 }
             }
-            //System.out.print("Support: " + support[currP]);
-            //System.out.print("; Denominator: " + denominator[currP]);
-            //System.out.println("; Confidence: " + 1.0*support[currP]/denominator[currP]);
+            // System.out.print("p:" + currP);
+            // System.out.print("; Support: " + support[currP]);
+            // System.out.print("; Denominator: " + denominator[currP]);
+            // if (denominator[currP] == 0){
+            //     System.out.println("; Confidence: 0.000");
+            // } else {
+            //     System.out.println("; Confidence: " + String.format("%.3f", 1.0*support[currP]/denominator[currP]));
+            // }
         }
 
         double[] confidence = new double[dataMap.size()];
-        for (int i = 0; i < support.length; i++){
-            confidence[i] = support[i]*1.0 / denominator[i];
+        for (int i = 0; i < support.length; i++) {
+            if (denominator[i] != 0){
+                confidence[i] = support[i]*1.0 / denominator[i];
+            } else {
+                confidence[i] = 0.0;
+            }
         }
 
         // System.out.println(" Support: ");
