@@ -829,7 +829,7 @@ public class Anomaly {
                 transitiveMsmt[i] = headCnt[i]*1.0 / transitiveMsmt[i];
             }
         }
-        System.out.println("Transitive Measurements (Head Coverage): ");
+        System.out.println("Measurements (Head Coverage) for Transitive Relations: ");
         printArray(transitiveMsmt);
 
         int anomalyCount = 0;
