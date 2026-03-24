@@ -432,6 +432,27 @@ public class App {
     }
 
 
+    public static int[] getTriplesPerP (HashMap<Integer, ArrayList<Triple>> map, int numPs){
+        int[] triples = new int[numPs];
+        int i = 0;
+        for (var x : map.entrySet()){
+            while (i < x.getKey()){
+                triples[i] = 0;
+                i++;
+            }
+            if (x.getKey() == i){
+                triples[i] =  x.getValue().size();
+            }
+            i++;
+        }
+        while (i < numPs){
+                triples[i] = 0;
+                i++;
+            }
+        return triples;
+    }
+
+
     public static void main(String[] args) throws Exception {
         String baseFolder = "C:/Users/lklec/AnomalyResearch/Datasets/";
         String[] datasets = {"BioKG", "FB13", "FB15K", "FB15K237", "Hetionet", "NELL-995", "WN11", "WN18", "WN18RR", "YAGO3-10"};
@@ -444,16 +465,18 @@ public class App {
             scan.close();
             System.out.println("Number of predicates P: " + numPs);
 
-            var map = parseHashMap(currFolder, numPs, true, true, false);
+            var map = parseHashMap(currFolder, numPs, false, false, true);
 
             //Find and print all anomaly measurements
-            Anomaly.findNearSame(map, numPs);
-            Anomaly.findNearReverse(map, numPs); 
-            Anomaly.findTransitive(map, numPs); 
-            Anomaly.findSymmetric(map, numPs);
-            Anomaly.manyToOne(map, numPs);
-            Anomaly.oneToMany(map, numPs);
-            Anomaly.findCartesianConfidence(map);
+            // Anomaly.findNearSame(map, numPs);
+            // Anomaly.findNearReverse(map, numPs); 
+            // Anomaly.findTransitive(map, numPs); 
+            // Anomaly.findSymmetric(map, numPs);
+            // Anomaly.manyToOne(map, numPs);
+            // Anomaly.oneToMany(map, numPs);
+            // Anomaly.findCartesianConfidence(map);
+
+            Anomaly.printArray(getTriplesPerP(map, numPs));
 
             System.out.println();
         }

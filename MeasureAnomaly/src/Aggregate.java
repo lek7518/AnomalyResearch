@@ -64,6 +64,15 @@ public class Aggregate {
     }
 
 
+    public static int sum(Integer[] values){
+        int result = 0;
+        for (int i : values){
+            result += i;
+        }
+        return result;
+    }
+
+
     // x => 1 / x+1
     public static Double[] normalize(Double[] arr){
         Double[] zs = new Double[arr.length];
@@ -86,16 +95,146 @@ public class Aggregate {
 
         return zs;
     }
+
+    public static Double[] contraryWeights(Double[] arr){
+        Double max = 5.0;
+        Double[] res = new Double[arr.length];
+        for(int i = 0; i < arr.length; i++){
+            res[i] = max - arr[i];
+        }
+        return res;
+    }
+
+
+    public static Double weightedMean(Double[] weights, Integer[] triples){
+        double numerator = 0.0;
+        double denominator = 0.0;
+        
+        for(int i = 0; i < weights.length; i++){
+            numerator += weights[i] * (1.0 * triples[i]);
+            denominator += triples[i];
+        }
+
+        return numerator / denominator;
+    }
+
+    
+    public static Double[] weightedMeanPerRedundancy(HashMap<String, Float[]> r, Integer[] triples){
+        Double[] weightedR = new Double[5];
+        for (int w = 0; w < weightedR.length; w++){
+            weightedR[w] = 0.0;
+        }
+        int numPs = r.get("Cartesian").length;
+        int totalTriples = sum(triples);
+        int i = 0;
+        for (var e : r.entrySet()){
+            // do not include cardinality in sum for now
+            if (!e.getKey().equals("N:1") && !e.getKey().equals("1:N")){ 
+                for (int p = 0; p < numPs; p++){
+                    weightedR[i] += Double.valueOf(e.getValue()[p]) * Double.valueOf(triples[p]);
+                }
+                weightedR[i] = weightedR[i] / Double.valueOf(totalTriples);
+                i++;
+            }
+        }     
+        
+        return weightedR;
+    }
+
+    
+    // output results in json format
+    public static void outputWeights(String dataset, HashMap<String, Float[]> redundancies){
+        System.out.print("{\"dataset\": \"" + dataset + "\", \"summed_weights\": [");
+        Double[] sums = sumRedundancy(redundancies);            
+        for(int s = 0; s < sums.length; s++){
+            if (s != 0){
+                System.out.print(", ");
+            }
+            System.out.print(String.format("%.3f", sums[s]));
+        }
+        System.out.print("], \"normalized_weights\": [");
+        Double[] normalized = normalize(sums);
+        // contrary weights
+        //Double[] normalized = contraryWeights(sums);
+        for(int n = 0; n < normalized.length; n++){
+            if (n != 0){
+                System.out.print(", ");
+            }
+            System.out.print(String.format("%.7f", normalized[n]));
+        }
+        System.out.print("]},\n");
+    }
+
+
+    public static void outputHistogramData(Double[][] data){
+        // parameter data: rows = dataset, col = redundancy
+        // data = {'all the data': [[near-duplicate], [near-reverse], [cartesian], [symmetric], [transitive]]}
+
+        System.out.println("data = {'all': [");
+        for(int i = 0; i < 5; i++){
+            if (i != 0){
+                System.out.print(", ");
+            }
+            System.out.print("[");
+            for(int j = 0; j < 10; j++){
+                if (j != 0){
+                    System.out.print(", ");
+                }
+                System.out.print(data[j][i]);
+            }
+            System.out.print("]");
+        }
+        System.out.println("]}");
+    }
+
+
+    public static HashMap<String, Integer[]> parseNumTriples(){
+        HashMap<String, Integer[]> values = new HashMap<>();
+        String filepath = "C:/Users/lklec/AnomalyResearch/AnomalyResearchResults/NumTriples_Test.txt";
+        File f = new File(filepath);
+        try (Scanner scan = new Scanner(f)){
+            while (scan.hasNextLine()){
+                String datasetName = scan.nextLine().split(" ")[1];
+                Integer numP = Integer.parseInt(scan.nextLine().split(" ")[4]);
+                long numTriples = 0;
+                Integer[] tripleCnts;
+                while(true){
+                    String line = scan.nextLine();
+                    String[] splitLine = line.split(" ");
+                    if (splitLine[0].equals("Adding")){
+                        numTriples += Long.parseLong(splitLine[1]);
+                    } else {
+                        String[] tripleArr = line.substring(1, line.length()-1).split(", ");
+                        tripleCnts = Arrays.stream(tripleArr).map(Integer::valueOf).toArray(Integer[]::new);
+                        break;
+                    }
+                }
+                if(numP == tripleCnts.length){
+                    values.put(datasetName, tripleCnts);
+                }
+                if (scan.hasNextLine()){
+                    scan.nextLine();
+                }
+            }
+        } catch(Exception e){
+            System.out.println("Exception in parseNumTriples: " + e.getMessage());
+        }
+        return values;
+    }
     
 
     public static void main(String args[]){
+        var tripleCnts = parseNumTriples();
+        Double[][] histogramData = new Double[10][5];
         HashMap<String, Float[]> redundancies = new HashMap<>();
 
         String baseFolder = "C:/Users/lklec/AnomalyResearch/AnomalyResearchResults/Train/";
         File folder = new File(baseFolder);
         //String currFile = "WN18.out";
         //File f = new File(baseFolder + currFile);
+        int d = 0;
         for(File f : folder.listFiles()){
+            String datasetName = f.getName().split("[\\.]")[0];
             try (Scanner scan = new Scanner(f)){
                 String line1 = scan.nextLine();
                 String line2 = scan.nextLine();
@@ -132,26 +271,16 @@ public class Aggregate {
             } catch (Exception e) {
                 System.out.println("Exception found: " + e.getMessage());
             }
+            // outputWeights(datasetName, redundancies);
 
-            // output results in json format
-            System.out.print("{\"dataset\": \""+f.getName().split("[\\.]")[0]+"\", \"summed_weights\": [");
-            Double[] sums = sumRedundancy(redundancies);
-            for(int s = 0; s < sums.length; s++){
-                if (s != 0){
-                    System.out.print(", ");
-                }
-                System.out.print(String.format("%.3f", sums[s]));
-            }
-            System.out.print("], \"normalized_weights\": [");
-            Double[] normalized = normalize(sums);
-            for(int n = 0; n < normalized.length; n++){
-                if (n != 0){
-                    System.out.print(", ");
-                }
-                System.out.print(String.format("%.3f", normalized[n]));
-            }
-            System.out.print("]},\n");
-
-        }
+            Double[] weights = sumRedundancy(redundancies);
+            Integer[] triples = tripleCnts.get(datasetName);
+            Double wmean = weightedMean(weights, triples);
+            System.out.println(datasetName + " Weighted Mean: " + wmean);
+            histogramData[d] = weightedMeanPerRedundancy(redundancies, triples);
+            
+            d++;
+        } //end for loop
+        outputHistogramData(histogramData);
     }
 }
