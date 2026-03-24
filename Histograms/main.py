@@ -77,14 +77,15 @@ def main():
     # single_histogram(p_counts, "FB15k-237 p Distribution")
     # anomaly_dist_histogram(all_counts, train_counts, valid_counts, test_counts, dataset_name)
     # percent_comparison(p_counts, all_counts, train_counts, valid_counts, test_counts, dataset_name)
-    # stacked_bar_chart(fb15k_percents, "FB15k")
+    #stacked_bar_chart(fb15k_percents, "FB15k")
     # stacked_bar_chart(fb15k237_percents, "FB15k-237")
     # stacked_bar_chart(wn18_percents, "WN18")
     # stacked_bar_chart(wnrr_percents, "WN18RR")
     #create_all_pdf()
 
     # Experiment data
-    create_experiment_pdf()
+    #create_experiment_pdf()
+    stacked_bar_chart_all_datasets()
 
 
 def create_all_pdf():
@@ -633,7 +634,7 @@ def stacked_bar_chart(percents, dataset_name):
                        Patch(facecolor=colors[5], edgecolor='black', label='Reflexive')]
     ax.legend(handles=legend_elements, ncols=2)
 
-    #plt.show()
+    plt.show()
     return fig
 
 
@@ -691,6 +692,68 @@ def stacked_bar_chart_no_valid(percents, dataset_name):
     ax.legend(handles=legend_elements, ncols=2)
 
     #plt.show()
+    return fig
+
+
+def stacked_bar_chart_all_datasets():
+    labels = ("BioKG", "FB13", "FB15K", "FB15K237", "Hetionet", "NELL-995", "WN11", "WN18", "WN18RR", "YAGO3-10")
+
+    # data format
+    # data = {'all the data': [[near-duplicate], [near-reverse], [cartesian], [symmetric], [transitive]]}
+    data = {
+        'all the data': [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+                         [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]],
+    }
+    training_data = {'all': [
+        [0.051424575340401776, 6.674056073533816E-4, 0.060221189640742606, 0.04932115118125484, 0.04798742699491701,
+         0.007890191057542541, 4.3319922825743864E-5, 1.080725688667219E-4, 9.544538692903972E-5, 0.001551509702439275],
+        [0.01897838263204262, 0.08468954683115326, 0.25422205350549965, 0.15606317379924017, 0.09968273814453169,
+         0.0795340465435946, 0.0020062089214603605, 0.0019322478947130996, 0.0016869580738481645, 0.5274363300845804],
+        [0.6909654766498781, 3.5944496537700685E-4, 0.08117452958447496, 0.1311806719038583, 0.15124608440351167,
+         0.10278861391009328, 0.0029289844401235656, 0.009971543425573007, 0.01423935095409632, 0.06594890738813328],
+        [0.0, 0.03568791235499797, 0.6886177990901791, 0.20927035643568476, 7.086365608826228E-4, 0.06572748186018662,
+         0.88574113556247, 0.7213741041249045, 0.0020017850286890753, 0.0065811100159716505],
+        [0.0, 0.01311709130882379, 0.07145142874451686, 0.12483461111352666, 0.001534646691297004, 0.11476947116836618,
+         0.012643536365514726, 0.20970825125301282, 0.3415493346413375, 0.029635533226200734]]}
+
+    test_data = {'all': [
+        [0.052984335114891194, 0.0011187798112818575, 0.05970574397774669, 0.042767517003176596, 0.04883928830379413, 0.0, 3.6323977446085345E-5, 1.0780000246595591E-4, 1.0338226132969721E-4, 0.0015432000280590729],
+        [0.020478142967998866, 0.002580499655755234, 0.25420160560658683, 0.06077015488590757, 0.10092622030482938, 0.08642504357501153, 0.001998198089840446, 0.0019898000460118054, 0.0016640077073387944, 0.5205312025171704],
+        [0.7074437039963742, 0.0, 0.08367437399067447, 0.033033860674118884, 0.14921813040839302, 0.0, 0.0028206562776165686, 0.01039120033737272, 0.014682514841622842, 0.06611759908532258],
+        [0.0, 0.0, 0.688102892460026, 0.09432292613911303, 6.951111084885067E-4, 0.002537067623615658, 0.9057402294696194, 0.7153604071018752, 0.0020615826737169526, 0.006340599967353046],
+        [0.0, 0.0, 0.07374295377582663, 0.021947376245258162, 0.0015669333656628927, 0.0, 0.0017088391112901372, 0.21518979624246712, 0.3432795090003393, 0.02966019979128614]]}
+
+    x = np.arange(len(labels))
+    width = 0.75
+    fig, ax = plt.subplots(layout='constrained')
+    curr_color = 0
+    colors = ["#003a7d", "#008dff", "#ff73b6", "#c701ff", "#4ecb8d", "#ff9d3a", "#f9e858", "#d83034"]
+
+    for dataset, measurement in training_data.items():
+        color_cnt = 0
+        bottom = np.zeros(10)
+        for msmt in measurement:
+            rects = ax.bar(x + width, msmt, width, label=dataset, bottom=bottom, color=colors[color_cnt], linewidth=1, edgecolor="black") #hatch=hatch[color_cnt])#color_vary[curr_color]) )
+            bottom += msmt
+            color_cnt += 1
+        ax.bar_label(rects, padding=3, fmt='{:.3f}', fontsize=8)
+        curr_color += 1
+
+    ax.set_xticks(x + width-0.15, labels)
+    ax.tick_params(axis='x', rotation=55, length=0)
+    ax.margins(y=0.15)
+    ax.set_ylabel('Dataset Redundancy Measurement')
+    #ax.set_xlabel('Dataset')
+    ax.set_title('Overall Dataset Redundancy Measurement Split by Type - Training Set')
+
+    legend_elements = [Patch(facecolor=colors[0], edgecolor='black', label='Cartesian'),
+                       Patch(facecolor=colors[1], edgecolor='black', label='Near-Duplicate'),
+                       Patch(facecolor=colors[2], edgecolor='black', label='Transitive'),
+                       Patch(facecolor=colors[3], edgecolor='black', label='Near-Reverse'),
+                       Patch(facecolor=colors[4], edgecolor='black', label='Symmetric')]
+    ax.legend(handles=legend_elements, ncols=2)
+
+    plt.show()
     return fig
 
 
