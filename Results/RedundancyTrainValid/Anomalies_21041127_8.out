@@ -1,0 +1,57 @@
+Analyzing YAGO3-10 for redundancies in training & validation.
+Number of predicates P: 37
+Adding 1079040 triples to a new hash map from train2id.txt
+Adding 5000 triples to a new hash map from valid2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.000, 0.263, 0.082, 0.012, 0.017, 0.159, 0.011, 0.092, 0.000, 0.873, 0.220, 0.022, 0.092, 0.123, 0.000, 0.019, 0.004, 0.174, 0.139, 0.125, 0.000, 0.016, 0.000, 0.146, 0.000, 0.295, 0.112, 0.001, 0.000, 0.121, 0.000, 0.152, 0.389, 0.750, 0.025, 0.001, 0.177
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.000, 0.263, 0.000, 0.012, 0.000, 0.000, 0.020, 0.000, 0.000, 0.000, 0.000, 0.082, 0.000, 0.000, 0.000, 0.000, 0.033, 0.000, 0.000, 0.126, 0.000, 0.016, 0.000, 0.000, 0.287, 0.299, 0.292, 0.069, 0.000, 0.000, 0.000, 0.000, 0.680, 0.000, 0.000, 0.006, 0.000
+Transitive Measurements (Head Coverage): 
+0.969, 0.211, 0.000, 0.115, 0.000, 0.000, 0.390, 0.000, 0.000, 0.000, 0.000, 0.014, 0.000, 0.000, 0.000, 0.000, 0.017, 0.000, 0.000, 0.734, 0.000, 0.007, 0.000, 0.000, 0.003, 0.885, 0.000, 0.020, 0.000, 0.000, 0.000, 0.000, 0.001, 0.000, 0.000, 0.346, 0.000
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.665, 0.211, 0.000, 0.082, 0.000, 0.000, 0.065, 0.000, 0.000, 0.000, 0.000, 0.005, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.122, 0.000, 0.984, 0.000, 0.000, 0.000, 0.993, 0.000, 0.004, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.017, 0.000
+Measurements (Head Coverage) for N:1 Relations: 
+0.994, 0.211, 0.955, 0.700, 0.988, 0.997, 0.924, 0.272, 0.991, 0.999, 0.153, 0.326, 0.951, 0.885, 1.000, 0.175, 0.946, 0.583, 0.807, 0.954, 1.000, 0.275, 1.000, 0.558, 0.993, 0.962, 0.853, 0.654, 0.996, 0.981, 0.750, 0.992, 0.448, 0.998, 0.950, 0.922, 0.931
+Measurements (Head Coverage) for 1:N Relations: 
+0.999, 0.737, 0.630, 0.692, 0.974, 0.915, 0.843, 0.931, 0.000, 0.999, 0.902, 0.614, 0.293, 0.000, 0.000, 0.990, 0.544, 0.785, 0.666, 0.954, 0.359, 0.268, 0.912, 0.602, 0.951, 0.964, 0.989, 0.238, 0.816, 0.241, 0.118, 0.911, 0.258, 0.995, 0.000, 0.919, 0.852
+Sat Feb 07 20:01:03 EST 2026 -- Cartesian product; going for p: 0(1 out of 37)
+Sat Feb 07 20:01:29 EST 2026 -- Cartesian product; going for p: 1(2 out of 37)
+Sat Feb 07 20:01:29 EST 2026 -- Cartesian product; going for p: 2(3 out of 37)
+Sat Feb 07 20:01:30 EST 2026 -- Cartesian product; going for p: 3(4 out of 37)
+Sat Feb 07 20:01:31 EST 2026 -- Cartesian product; going for p: 4(5 out of 37)
+Sat Feb 07 20:02:06 EST 2026 -- Cartesian product; going for p: 5(6 out of 37)
+Sat Feb 07 20:02:06 EST 2026 -- Cartesian product; going for p: 6(7 out of 37)
+Sat Feb 07 20:06:50 EST 2026 -- Cartesian product; going for p: 7(8 out of 37)
+Sat Feb 07 20:06:51 EST 2026 -- Cartesian product; going for p: 8(9 out of 37)
+Sat Feb 07 20:06:51 EST 2026 -- Cartesian product; going for p: 9(10 out of 37)
+Sat Feb 07 21:10:38 EST 2026 -- Cartesian product; going for p: 10(11 out of 37)
+Sat Feb 07 21:10:38 EST 2026 -- Cartesian product; going for p: 11(12 out of 37)
+Sat Feb 07 21:10:38 EST 2026 -- Cartesian product; going for p: 12(13 out of 37)
+Sat Feb 07 21:10:39 EST 2026 -- Cartesian product; going for p: 13(14 out of 37)
+Sat Feb 07 21:10:41 EST 2026 -- Cartesian product; going for p: 14(15 out of 37)
+Sat Feb 07 21:11:36 EST 2026 -- Cartesian product; going for p: 15(16 out of 37)
+Sat Feb 07 21:11:37 EST 2026 -- Cartesian product; going for p: 16(17 out of 37)
+Sat Feb 07 21:11:37 EST 2026 -- Cartesian product; going for p: 17(18 out of 37)
+Sat Feb 07 21:11:38 EST 2026 -- Cartesian product; going for p: 18(19 out of 37)
+Sat Feb 07 21:11:39 EST 2026 -- Cartesian product; going for p: 19(20 out of 37)
+Sat Feb 07 21:11:39 EST 2026 -- Cartesian product; going for p: 20(21 out of 37)
+Sat Feb 07 21:11:39 EST 2026 -- Cartesian product; going for p: 21(22 out of 37)
+Sat Feb 07 21:11:39 EST 2026 -- Cartesian product; going for p: 22(23 out of 37)
+Sat Feb 07 21:11:41 EST 2026 -- Cartesian product; going for p: 23(24 out of 37)
+Sat Feb 07 21:11:41 EST 2026 -- Cartesian product; going for p: 24(25 out of 37)
+Sat Feb 07 21:11:41 EST 2026 -- Cartesian product; going for p: 25(26 out of 37)
+Sat Feb 07 21:11:41 EST 2026 -- Cartesian product; going for p: 26(27 out of 37)
+Sat Feb 07 21:11:42 EST 2026 -- Cartesian product; going for p: 27(28 out of 37)
+Sat Feb 07 21:11:42 EST 2026 -- Cartesian product; going for p: 28(29 out of 37)
+Sat Feb 07 21:11:56 EST 2026 -- Cartesian product; going for p: 29(30 out of 37)
+Sat Feb 07 21:11:56 EST 2026 -- Cartesian product; going for p: 30(31 out of 37)
+Sat Feb 07 21:11:56 EST 2026 -- Cartesian product; going for p: 31(32 out of 37)
+Sat Feb 07 21:11:56 EST 2026 -- Cartesian product; going for p: 32(33 out of 37)
+Sat Feb 07 21:11:56 EST 2026 -- Cartesian product; going for p: 33(34 out of 37)
+Sat Feb 07 22:46:09 EST 2026 -- Cartesian product; going for p: 34(35 out of 37)
+Sat Feb 07 22:47:15 EST 2026 -- Cartesian product; going for p: 35(36 out of 37)
+Sat Feb 07 22:47:18 EST 2026 -- Cartesian product; going for p: 36(37 out of 37)
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.011, 0.021, 0.001, 0.000, 0.001, 0.082, 0.000, 0.000, 0.000, 0.001, 0.000, 0.001, 0.001, 0.000, 0.000, 0.001, 0.027, 0.000, 0.001, 0.033, 0.040, 0.000, 0.038, 0.001, 0.007, 0.024, 0.004, 0.000, 0.002, 0.002, 0.001, 0.087, 0.000, 0.001, 0.000, 0.002, 0.003
+
+Done

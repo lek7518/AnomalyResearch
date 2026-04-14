@@ -1,0 +1,34 @@
+Analyzing FB13 for redundancies in: (true, true, true)
+Number of predicates P: 13
+Adding 316232 triples to a new hash map from train2id.txt
+Adding 5908 triples to a new hash map from valid2id.txt
+Adding 23733 triples to a new hash map from test2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.004, 0.001, 0.136, 0.000, 0.359, 0.000, 0.008, 0.272, 0.000, 0.004, 0.006, 0.008, 0.007
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.932, 0.898, 0.006, 0.000
+Transitive Measurements (Head Coverage): 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.008, 0.009, 0.002, 0.000
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.004, 0.002, 0.921, 0.000
+Measurements (Head Coverage) for N:1 Relations: 
+1.000, 1.000, 0.969, 1.000, 0.975, 1.000, 1.000, 0.977, 1.000, 0.555, 0.647, 0.193, 0.998
+Measurements (Head Coverage) for 1:N Relations: 
+0.228, 0.283, 0.000, 0.546, 0.264, 0.002, 0.147, 0.000, 0.446, 0.648, 0.614, 0.206, 0.203
+Wed Feb 11 19:25:47 EST 2026 -- Cartesian product; going for p: 0 (0 out of 13)
+Wed Feb 11 19:25:49 EST 2026 -- Cartesian product; going for p: 1 (0 out of 13)
+Wed Feb 11 19:25:52 EST 2026 -- Cartesian product; going for p: 2 (0 out of 13)
+Wed Feb 11 19:26:37 EST 2026 -- Cartesian product; going for p: 3 (0 out of 13)
+Wed Feb 11 19:27:41 EST 2026 -- Cartesian product; going for p: 4 (0 out of 13)
+Wed Feb 11 19:28:02 EST 2026 -- Cartesian product; going for p: 5 (0 out of 13)
+Wed Feb 11 19:28:46 EST 2026 -- Cartesian product; going for p: 6 (0 out of 13)
+Wed Feb 11 19:29:43 EST 2026 -- Cartesian product; going for p: 7 (0 out of 13)
+Wed Feb 11 19:30:27 EST 2026 -- Cartesian product; going for p: 8 (0 out of 13)
+Wed Feb 11 19:30:35 EST 2026 -- Cartesian product; going for p: 9 (0 out of 13)
+Wed Feb 11 19:30:36 EST 2026 -- Cartesian product; going for p: 10 (0 out of 13)
+Wed Feb 11 19:30:38 EST 2026 -- Cartesian product; going for p: 11 (0 out of 13)
+Wed Feb 11 19:30:39 EST 2026 -- Cartesian product; going for p: 12 (0 out of 13)
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.002, 0.002, 0.000, 0.002, 0.000, 0.002, 0.001, 0.000, 0.001, 0.000, 0.000, 0.000, 0.001
+
+Done

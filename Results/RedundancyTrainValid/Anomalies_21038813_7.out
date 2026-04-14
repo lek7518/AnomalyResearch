@@ -1,0 +1,20 @@
+Analyzing WN18RR for redundancies in training & validation.
+Number of predicates P: 11
+Adding 86835 triples to a new hash map from train2id.txt
+Adding 3034 triples to a new hash map from valid2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.001, 0.001, 0.000, 0.004, 0.003, 0.007, 0.001, 0.000, 0.007, 0.015, 0.000
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.001, 0.001, 0.000, 0.029, 0.003, 0.008, 0.002, 0.000, 0.001, 0.015, 0.000
+Transitive Measurements (Head Coverage): 
+0.001, 0.030, 0.000, 0.172, 0.000, 0.003, 0.030, 0.000, 0.000, 0.021, 0.000
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.000, 0.966, 0.000, 0.652, 0.000, 0.001, 0.000, 0.000, 0.000, 0.967, 0.964
+Measurements (Head Coverage) for N:1 Relations: 
+0.880, 0.717, 0.936, 0.634, 0.016, 0.969, 0.304, 0.108, 0.100, 0.271, 0.084
+Measurements (Head Coverage) for 1:N Relations: 
+0.045, 0.719, 0.304, 0.712, 0.743, 0.089, 0.748, 0.992, 0.943, 0.266, 0.060
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.000, 0.000, 0.001, 0.001, 0.000, 0.000, 0.000, 0.005, 0.001, 0.000, 0.000
+
+Done

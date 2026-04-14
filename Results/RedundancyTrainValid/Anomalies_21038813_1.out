@@ -1,0 +1,20 @@
+Analyzing FB13 for redundancies in training & validation.
+Number of predicates P: 13
+Adding 316232 triples to a new hash map from train2id.txt
+Adding 5908 triples to a new hash map from valid2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.004, 0.001, 0.136, 0.000, 0.359, 0.000, 0.009, 0.272, 0.000, 0.004, 0.006, 0.008, 0.007
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.932, 0.898, 0.006, 0.000
+Transitive Measurements (Head Coverage): 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.008, 0.009, 0.002, 0.000
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.004, 0.002, 0.921, 0.000
+Measurements (Head Coverage) for N:1 Relations: 
+1.000, 1.000, 0.969, 1.000, 0.975, 1.000, 1.000, 0.977, 1.000, 0.555, 0.647, 0.193, 0.998
+Measurements (Head Coverage) for 1:N Relations: 
+0.194, 0.251, 0.000, 0.489, 0.264, 0.001, 0.125, 0.000, 0.396, 0.648, 0.614, 0.206, 0.174
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.002, 0.002, 0.000, 0.002, 0.000, 0.001, 0.001, 0.000, 0.001, 0.000, 0.000, 0.000, 0.001
+
+Done

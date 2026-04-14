@@ -1,0 +1,37 @@
+Analyzing BioKG for redundancies in training & validation.
+Number of predicates P: 17
+Adding 2057658 triples to a new hash map from train2id.txt
+Adding 5170 triples to a new hash map from valid2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.542, 0.998, 0.000, 0.998, 0.000, 0.999, 0.998, 0.000, 0.000, 0.000, 0.000, 0.000
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+Transitive Measurements (Head Coverage): 
+0.000, 0.000, 0.992, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.929, 0.000, 0.000, 0.000
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+Measurements (Head Coverage) for N:1 Relations: 
+0.994, 1.000, 1.000, 0.683, 0.956, 0.950, 0.940, 0.990, 0.960, 0.939, 0.910, 0.965, 0.958, 0.945, 0.998, 0.991, 0.083
+Measurements (Head Coverage) for 1:N Relations: 
+0.539, 0.284, 1.000, 0.863, 1.000, 0.869, 0.516, 0.990, 0.852, 0.879, 0.740, 0.867, 0.969, 0.931, 0.918, 0.944, 0.001
+Sat Feb 07 20:07:08 EST 2026 -- Cartesian product; going for p: 0(1 out of 17)
+Sat Feb 07 20:07:19 EST 2026 -- Cartesian product; going for p: 1(2 out of 17)
+Sat Feb 07 20:07:23 EST 2026 -- Cartesian product; going for p: 2(3 out of 17)
+Mon Feb 09 04:38:53 EST 2026 -- Cartesian product; going for p: 3(4 out of 17)
+Mon Feb 09 04:38:54 EST 2026 -- Cartesian product; going for p: 4(5 out of 17)
+Mon Feb 09 04:38:54 EST 2026 -- Cartesian product; going for p: 5(6 out of 17)
+Mon Feb 09 04:39:15 EST 2026 -- Cartesian product; going for p: 6(7 out of 17)
+Mon Feb 09 04:39:15 EST 2026 -- Cartesian product; going for p: 7(8 out of 17)
+Mon Feb 09 04:41:07 EST 2026 -- Cartesian product; going for p: 8(9 out of 17)
+Mon Feb 09 04:41:07 EST 2026 -- Cartesian product; going for p: 9(10 out of 17)
+Mon Feb 09 04:41:08 EST 2026 -- Cartesian product; going for p: 10(11 out of 17)
+Mon Feb 09 04:41:15 EST 2026 -- Cartesian product; going for p: 11(12 out of 17)
+Mon Feb 09 04:41:15 EST 2026 -- Cartesian product; going for p: 12(13 out of 17)
+Mon Feb 09 04:44:51 EST 2026 -- Cartesian product; going for p: 13(14 out of 17)
+Mon Feb 09 04:52:54 EST 2026 -- Cartesian product; going for p: 14(15 out of 17)
+Mon Feb 09 04:58:22 EST 2026 -- Cartesian product; going for p: 15(16 out of 17)
+Mon Feb 09 05:32:08 EST 2026 -- Cartesian product; going for p: 16(17 out of 17)
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.001, 0.013, 0.079, 0.001, 0.006, 0.001, 0.008, 0.006, 0.006, 0.003, 0.001, 0.010, 0.001, 0.000, 0.001, 0.000, 0.000
+
+Done

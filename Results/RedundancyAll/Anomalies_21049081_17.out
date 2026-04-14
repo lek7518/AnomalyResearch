@@ -1,0 +1,39 @@
+Analyzing WN18 for redundancies in: (true, true, true)
+Number of predicates P: 18
+Adding 141442 triples to a new hash map from train2id.txt
+Adding 5000 triples to a new hash map from valid2id.txt
+Adding 5000 triples to a new hash map from test2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.008, 0.003, 0.001, 0.007, 0.000, 0.001, 0.003, 0.000, 0.000, 0.008, 0.001, 0.000, 0.000, 0.002, 0.016, 0.002, 0.007, 0.032
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.998, 1.000, 0.001, 0.999, 0.000, 1.000, 1.000, 1.000, 0.991, 1.000, 1.000, 1.000, 1.000, 0.999, 0.016, 0.998, 1.000, 0.032
+Transitive Measurements (Head Coverage): 
+0.003, 0.000, 0.032, 0.000, 0.000, 0.001, 0.000, 0.000, 0.000, 0.003, 0.001, 0.000, 0.000, 0.030, 0.025, 0.030, 0.000, 0.186
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.001, 0.000, 1.000, 0.000, 1.000, 0.000, 0.000, 0.000, 0.000, 0.001, 0.000, 0.000, 0.000, 0.000, 1.000, 0.000, 0.000, 0.678
+Measurements (Head Coverage) for N:1 Relations: 
+0.093, 0.016, 0.727, 0.105, 0.081, 0.884, 0.745, 0.937, 0.113, 0.970, 0.046, 0.317, 0.994, 0.306, 0.278, 0.752, 0.943, 0.645
+Measurements (Head Coverage) for 1:N Relations: 
+0.970, 0.745, 0.727, 0.943, 0.081, 0.046, 0.016, 0.317, 0.994, 0.093, 0.884, 0.937, 0.111, 0.752, 0.278, 0.306, 0.105, 0.727
+Wed Feb 11 19:26:52 EST 2026 -- Cartesian product; going for p: 0 (0 out of 18)
+Wed Feb 11 19:26:52 EST 2026 -- Cartesian product; going for p: 1 (0 out of 18)
+Wed Feb 11 19:26:55 EST 2026 -- Cartesian product; going for p: 2 (0 out of 18)
+Wed Feb 11 19:27:46 EST 2026 -- Cartesian product; going for p: 3 (0 out of 18)
+Wed Feb 11 19:27:46 EST 2026 -- Cartesian product; going for p: 4 (0 out of 18)
+Wed Feb 11 19:27:46 EST 2026 -- Cartesian product; going for p: 5 (0 out of 18)
+Wed Feb 11 19:28:39 EST 2026 -- Cartesian product; going for p: 6 (0 out of 18)
+Wed Feb 11 19:28:42 EST 2026 -- Cartesian product; going for p: 7 (0 out of 18)
+Wed Feb 11 19:28:43 EST 2026 -- Cartesian product; going for p: 8 (0 out of 18)
+Wed Feb 11 19:28:43 EST 2026 -- Cartesian product; going for p: 9 (0 out of 18)
+Wed Feb 11 19:28:43 EST 2026 -- Cartesian product; going for p: 10 (0 out of 18)
+Wed Feb 11 19:29:26 EST 2026 -- Cartesian product; going for p: 11 (0 out of 18)
+Wed Feb 11 19:29:27 EST 2026 -- Cartesian product; going for p: 12 (0 out of 18)
+Wed Feb 11 19:29:27 EST 2026 -- Cartesian product; going for p: 13 (0 out of 18)
+Wed Feb 11 19:29:28 EST 2026 -- Cartesian product; going for p: 14 (0 out of 18)
+Wed Feb 11 19:29:28 EST 2026 -- Cartesian product; going for p: 15 (0 out of 18)
+Wed Feb 11 19:29:29 EST 2026 -- Cartesian product; going for p: 16 (0 out of 18)
+Wed Feb 11 19:29:29 EST 2026 -- Cartesian product; going for p: 17 (0 out of 18)
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.000, 0.000, 0.000, 0.001, 0.000, 0.000, 0.000, 0.001, 0.005, 0.000, 0.000, 0.001, 0.005, 0.000, 0.000, 0.000, 0.001, 0.001
+
+Done

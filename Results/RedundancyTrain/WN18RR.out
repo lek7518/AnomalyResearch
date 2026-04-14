@@ -1,0 +1,30 @@
+Analyzing WN18RR for redundancies in: (true, false, false)
+Number of predicates P: 11
+Adding 86835 triples to a new hash map from train2id.txt
+Measurements (Head Coverage) for Near-Same Anomalies: 
+0.001, 0.001, 0.000, 0.005, 0.003, 0.008, 0.001, 0.000, 0.007, 0.015, 0.000
+Measurements (Head Coverage) for Near-Reverse Anomalies: 
+0.001, 0.001, 0.000, 0.029, 0.003, 0.007, 0.002, 0.000, 0.001, 0.015, 0.000
+Transitive Measurements (Head Coverage): 
+0.001, 0.028, 0.000, 0.158, 0.000, 0.003, 0.027, 0.000, 0.000, 0.022, 0.000
+Measurements (Head Coverage) for Symmetric Anomalies: 
+0.000, 0.932, 0.000, 0.637, 0.000, 0.001, 0.000, 0.000, 0.000, 0.931, 0.925
+Measurements (Head Coverage) for N:1 Relations: 
+0.877, 0.708, 0.934, 0.630, 0.016, 0.968, 0.296, 0.105, 0.100, 0.258, 0.088
+Measurements (Head Coverage) for 1:N Relations: 
+0.043, 0.709, 0.297, 0.704, 0.739, 0.087, 0.743, 0.992, 0.941, 0.262, 0.063
+Wed Feb 11 19:23:48 EST 2026 -- Cartesian product; going for p: 0 (0 out of 11)
+Wed Feb 11 19:24:36 EST 2026 -- Cartesian product; going for p: 1 (0 out of 11)
+Wed Feb 11 19:25:18 EST 2026 -- Cartesian product; going for p: 2 (0 out of 11)
+Wed Feb 11 19:25:18 EST 2026 -- Cartesian product; going for p: 3 (0 out of 11)
+Wed Feb 11 19:25:18 EST 2026 -- Cartesian product; going for p: 4 (0 out of 11)
+Wed Feb 11 19:25:20 EST 2026 -- Cartesian product; going for p: 5 (0 out of 11)
+Wed Feb 11 19:25:20 EST 2026 -- Cartesian product; going for p: 6 (0 out of 11)
+Wed Feb 11 19:25:21 EST 2026 -- Cartesian product; going for p: 7 (0 out of 11)
+Wed Feb 11 19:25:21 EST 2026 -- Cartesian product; going for p: 8 (0 out of 11)
+Wed Feb 11 19:25:21 EST 2026 -- Cartesian product; going for p: 9 (0 out of 11)
+Wed Feb 11 19:25:21 EST 2026 -- Cartesian product; going for p: 10 (0 out of 11)
+Measurements (Confidence) for Cartesian Product Anomalies:
+0.000, 0.000, 0.001, 0.001, 0.000, 0.000, 0.000, 0.005, 0.001, 0.000, 0.000
+
+Done
