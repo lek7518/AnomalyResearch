@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Aggregate {
+    // output redundancy values
     public static void printRedundancies(HashMap<String, Float[]> r){
         System.out.println("redundancies = {");
         for(var e : r.entrySet()){
@@ -43,6 +44,7 @@ public class Aggregate {
     }
 
     
+    // find minimum value
     public static Double findMin(Double[] arr){
         Double min = arr[0];
         for(Double x : arr){
@@ -53,6 +55,8 @@ public class Aggregate {
         return min;
     }
 
+
+    // find maximum value
     public static Double findMax(Double[] arr){
         Double max = arr[0];
         for(Double x : arr){
@@ -64,6 +68,7 @@ public class Aggregate {
     }
 
 
+    // sum integer values
     public static int sum(Integer[] values){
         int result = 0;
         for (int i : values){
@@ -83,6 +88,7 @@ public class Aggregate {
         return zs;
     }
 
+
     // x => max - x
     public static Double[] normalize2(Double[] arr){
         //another option: normalize between zero and one: zs[i] = (arr[i] - min) / (max - min);
@@ -96,6 +102,7 @@ public class Aggregate {
         return zs;
     }
 
+
     public static Double[] contraryWeights(Double[] arr){
         Double max = 5.0;
         Double[] res = new Double[arr.length];
@@ -105,7 +112,12 @@ public class Aggregate {
         return res;
     }
 
-
+    /**
+     * Calculate weighted mean
+     * @param weights delta(p) values
+     * @param triples number of triples per p
+     * @return the weighted mean of delta(p) values, weighted by number of triples
+     */
     public static Double weightedMean(Double[] weights, Integer[] triples){
         double numerator = 0.0;
         double denominator = 0.0;
@@ -119,6 +131,12 @@ public class Aggregate {
     }
 
     
+    /**
+     * Calculate weighted mean for each redundancy type
+     * @param r redundancy hashmap
+     * @param triples number of triples for each predicate
+     * @return array of weighted means for each type of redundancy
+     */
     public static Double[] weightedMeanPerRedundancy(HashMap<String, Float[]> r, Integer[] triples){
         Double[] weightedR = new Double[5];
         for (int w = 0; w < weightedR.length; w++){
@@ -141,8 +159,12 @@ public class Aggregate {
         return weightedR;
     }
 
-    
-    // output results in json format
+
+    /**
+     * Print results in json format
+     * @param dataset which dataset
+     * @param redundancies map of all types of redundancy for this dataset
+     */
     public static void outputWeights(String dataset, HashMap<String, Float[]> redundancies){
         System.out.print("{\"dataset\": \"" + dataset + "\", \"summed_weights\": [");
         Double[] sums = sumRedundancy(redundancies);            
@@ -166,6 +188,10 @@ public class Aggregate {
     }
 
 
+    /**
+     * Print python code for overall redundancy measurement (split by type) histogram
+     * @param data histogram data (rows = dataset, col = redundancy type)
+     */
     public static void outputHistogramData(Double[][] data){
         // parameter data: rows = dataset, col = redundancy
         // data = {'all the data': [[near-duplicate], [near-reverse], [cartesian], [symmetric], [transitive]]}
@@ -188,6 +214,10 @@ public class Aggregate {
     }
 
 
+    /**
+     * Parses file (given inside function) to get number of triples in each predicate in each dataset
+     * @return HashMap where key is dataset name and value is Int[] with number of triples for each predicate in order
+     */
     public static HashMap<String, Integer[]> parseNumTriples(){
         HashMap<String, Integer[]> values = new HashMap<>();
         String filepath = "C:/Users/lklec/AnomalyResearch/AnomalyResearchResults/NumTriples_Test.txt";
@@ -226,8 +256,11 @@ public class Aggregate {
     public static void main(String args[]){
         var tripleCnts = parseNumTriples();
         Double[][] histogramData = new Double[10][5];
+
+        // map to add redundancies to
         HashMap<String, Float[]> redundancies = new HashMap<>();
 
+        // for each dataset in the base folder
         String baseFolder = "C:/Users/lklec/AnomalyResearch/AnomalyResearchResults/Train/";
         File folder = new File(baseFolder);
         //String currFile = "WN18.out";
@@ -251,10 +284,12 @@ public class Aggregate {
                     }
                 }
 
+                // for each type of redundancy
                 String[] keys = {"Near-Duplicate", "Near-Reverse", "Transitive", "Symmetric", "N:1", "1:N"};
                 for(int i = 0; i < 11; i++){
                     String line = scan.nextLine();
                     if (i % 2 == 0){
+                        // get values for each predicate for this type of redundancy and add to map
                         Float[] values = Arrays.stream(line.split(", ")).map(Float::valueOf).toArray(Float[]::new);
                         redundancies.put(keys[i/2], values);
                     }
@@ -265,6 +300,7 @@ public class Aggregate {
                     line = scan.nextLine();
                 }
                 line = scan.nextLine();
+                // add cartesian product values to map
                 Float[] values = Arrays.stream(line.split(", ")).map(Float::valueOf).toArray(Float[]::new);
                 redundancies.put("Cartesian", values);
 
@@ -273,14 +309,20 @@ public class Aggregate {
             }
             // outputWeights(datasetName, redundancies);
 
+            // find delta(p) values for each predicate by summing each type
             Double[] weights = sumRedundancy(redundancies);
+            // get number of triples in each predicate
             Integer[] triples = tripleCnts.get(datasetName);
+            // find overall redundancy measurement: weighted mean of all delta(p) values weighted by number of triples per predicate
             Double wmean = weightedMean(weights, triples);
             System.out.println(datasetName + " Weighted Mean: " + wmean);
+            // record weighted mean per redundancy to show the value split by types for the histogram
             histogramData[d] = weightedMeanPerRedundancy(redundancies, triples);
             
             d++;
         } //end for loop
+
+        // output all histogram data
         outputHistogramData(histogramData);
     }
 }
