@@ -15,4 +15,15 @@ public class Rank {
         this.numNegatives = negatives;
         this.isHead = isHead;
     }
+
+    public String toString() {
+        String result = "(" + this.s + ", " + this.p +"," + this.o + ")-";
+        if (isHead){
+            result += "h; ";
+        } else {
+            result += "t; ";
+        }
+        result += "Rank: " + this.rank + "; #Negatives: " + numNegatives;
+        return result;
+    }
 }
