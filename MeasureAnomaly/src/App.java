@@ -8,6 +8,10 @@ import java.io.FileNotFoundException;
 
 public class App {
 
+    /***
+     * Create a small test HashMap from data provided inside the function
+     * @return the test HashMap
+     */
     public static HashMap<Integer, ArrayList<Triple>> createHashMap(){
         HashMap<Integer, ArrayList<Triple>> dataMap = new HashMap<>();
         Triple[] fakeData = {new Triple(1, 3, 2), new Triple(1, 4, 2)};
@@ -23,9 +27,14 @@ public class App {
         return dataMap;
     }
 
-    /**
+    /***
      * Takes in a folder that contains files with training, validation, 
      * and test triples and creates a hash map
+     * @param dataFolder folder containing training, validation, and test text files
+     * @param numPs number of predicates
+     * @param train true to include training data, false otherwise
+     * @param valid true to include validation data, false otherwise
+     * @param test true to include test data, false otherwise
      * @return hash map with predicate as the key, value is an ArrayList of Triples
      */
     public static HashMap<Integer, ArrayList<Triple>> parseHashMap(
@@ -88,9 +97,15 @@ public class App {
     }
 
 
-    /**
-     * Takes in a folder that contains files with training, 
-     * and test triples and creates a hash map for other experimental data
+    /***
+     * parseHashMap function for Experimental data.
+     * Takes in a folder that contains files with training and test triples in (s, p, o) format
+     * and creates a hash map for other experimental data.
+     * @param dataFolder folder containing training and test text files (ex: YAGO3-10/experiments/epsilon_0.1_alpha_0.05)
+     * @param numPs number of predicates
+     * @param train true to include training data, false otherwise
+     * @param valid true to include validation data, false otherwise
+     * @param test true to include test data, false otherwise
      * @return hash map with predicate as the key, value is an ArrayList of Triples
      */
     public static HashMap<Integer, ArrayList<Triple>> parseExperimentalHashMap(
@@ -148,6 +163,15 @@ public class App {
     }
 
 
+    /***
+     * Alias for parseHashMap with integers instead of booleans to dictate which splits are included in the hashmap
+     * @param dataFolder folder containing training, validation, and test text files
+     * @param numPs number of predicates
+     * @param train one to include training data, zero otherwise
+     * @param valid one to include validation data, zero otherwise
+     * @param test one to include test data, zero otherwise
+     * @return hash map with predicate as the key, value is an ArrayList of Triples
+     */
     public static HashMap<Integer, ArrayList<Triple>> parseHashMap(
         String dataFolder, int numPs, int train, int valid, int test){
             boolean trainBool = true;
@@ -166,6 +190,13 @@ public class App {
         }
 
 
+    /***
+     * Test a hashmap to ensure it has been correctly created
+     * Tests include: correct number of predicates, correct number of triples
+     * @param map the hashmap to test
+     * @param dataFile the file or folder the hashmap was created from
+     * @return true if it passes all tests, false otherwise
+     */
     public static boolean testMap(HashMap<Integer, ArrayList<Triple>> map, String dataFile){
         boolean result = true;
 
@@ -232,6 +263,7 @@ public class App {
         return result;
     }
 
+
     /**
      * Sorts p values into "buckets" for display as a histogram.
      * Assumes all values are between 0 and 1.
@@ -290,6 +322,13 @@ public class App {
     }
 
 
+    /***
+     * Finds all redundancy values for all splits of the KG. 
+     * Prints the histogram counts for use in python plots.
+     * @param currFolder folder of the dataset you wish to analyze
+     * @param numPs number of predicates
+     * @param numBuckets number of buckets in the histogram
+     */
     public static void printHistogramCounts(String currFolder, int numPs, int numBuckets){
         var map = parseHashMap(currFolder, numPs, 1, 1, 1);
         var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
@@ -313,9 +352,17 @@ public class App {
     }
 
     
+    /***
+     * Print the percent of the data with each anomaly for use in histograms.
+     * @param anomalies anomaly values to use
+     * @param map hashmap of triples to use
+     * @param numPs number of predicates
+     * @param label label of the split in the histogram
+     */
     public static void percentPerAnomaly(double[][] anomalies, HashMap<Integer, ArrayList<Triple>> map, int numPs, String label){
         int numAnomalies = 6;
         
+        // FORMATTING INFO:
         // anomalyValues = [anomaly type][bucket]
         // anomaly types: [near-duplicate, near-reverse, cartesian, transitive, symmetric, reflexive]
         // buckets: [0-.25, .25-.5, .5-.75, .75-1] 
@@ -358,6 +405,11 @@ public class App {
     }
 
 
+    /***
+     * Print the python code for histograms measuring the percent of the data in each anomaly. 
+     * Currently set up for experimental data (ex: YAGO/experiments/epsilon_1_alpha_0.95). Code for regular splits inside.
+     * @param currDataset the dataset to use
+     */
     public static void printExperimentGraphData(String currDataset) {
         String baseFolder = "C:/Users/lklec/AnomalyResearch/Datasets/";
         String currFolder = baseFolder + currDataset;
@@ -371,7 +423,9 @@ public class App {
             System.out.println("Relation file not found. Ex: " + e);
         }
         System.out.println("Number of relations P: " + numPs);
-        /*
+        
+        /* 
+        // PERCENT HISTOGRAMS FOR REGULAR SPLITS HERE
         // Data for original splits
         var map  = parseHashMap(currFolder, numPs, true, true, true);
         
@@ -401,11 +455,12 @@ public class App {
         percentPerAnomaly(anomalies, testMap, numPs, "Test");
         System.out.println("}\n");
         */
-        // Data for new splits
+
+        // PERCENT HISTOGRAMS FOR EXPERIMENTAL SPLITS HERE
         // need to run epsilon_0_alpha_0.95, epsilon_1_alpha_0.05, epsilon_0_alpha_0.95
         baseFolder = currFolder + "/experiments/";
         try {
-            File base = new File(baseFolder);
+            //File base = new File(baseFolder);
             String[] toRun = {"epsilon_1_alpha_0.95"};
             //for (String currExperiment : base.list()){
             for (String currExperiment : toRun){
@@ -432,6 +487,12 @@ public class App {
     }
 
 
+    /***
+     * Return the number of triples in each predicate p
+     * @param map triples to analyze
+     * @param numPs number of predicates, total
+     * @return integer array containing the number of triples for each p (p 0 at index 0, etc)
+     */
     public static int[] getTriplesPerP (HashMap<Integer, ArrayList<Triple>> map, int numPs){
         int[] triples = new int[numPs];
         int i = 0;
@@ -456,6 +517,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         String baseFolder = "C:/Users/lklec/AnomalyResearch/Datasets/";
         String[] datasets = {"BioKG", "FB13", "FB15K", "FB15K237", "Hetionet", "NELL-995", "WN11", "WN18", "WN18RR", "YAGO3-10"};
+        // For each dataset
         for (String dataset : datasets) {
             System.out.println("Analyzing " + dataset + " for redundancies in training & validation.");
             String currFolder = baseFolder + dataset;
@@ -465,9 +527,10 @@ public class App {
             scan.close();
             System.out.println("Number of predicates P: " + numPs);
 
-            var map = parseHashMap(currFolder, numPs, false, false, true);
+            // Create a hashmap of triples contained in the current dataset, accross all splits
+            var map = parseHashMap(currFolder, numPs, true, true, true);
 
-            //Find and print all anomaly measurements
+            // Find and print all redundancy measurements for the current hashmap
             // Anomaly.findNearSame(map, numPs);
             // Anomaly.findNearReverse(map, numPs); 
             // Anomaly.findTransitive(map, numPs); 
@@ -476,38 +539,19 @@ public class App {
             // Anomaly.oneToMany(map, numPs);
             // Anomaly.findCartesianConfidence(map);
 
+            // Print the number of triples in each predicate
             Anomaly.printArray(getTriplesPerP(map, numPs));
-
             System.out.println();
         }
-        /*
-        var trainMap  = parseHashMap(currFolder, numPs, true, false, false);
-        var testMap = parseHashMap(currFolder, numPs, false, false, true);
-        var validMap = parseHashMap(currFolder, numPs, false, true, false);
-        percentPerAnomaly(anomalies, map, numPs, "p");
-        percentPerAnomaly(anomalies, map, numPs, "All");
-        percentPerAnomaly(anomalies, trainMap, numPs, "Train");
-        percentPerAnomaly(anomalies, validMap, numPs, "Valid");
-        percentPerAnomaly(anomalies, testMap, numPs, "Test");
-        */
+
+        // Print python code for histogram with percent of data in each anomaly type
+        // Note: currently set up for experimental data, uncomment the code in printExperimentGraphData to use for regular datasets
         //printExperimentGraphData("YAGO3-10");
         
-        //System.out.println(testMap(trainMap, currFolder + "/train2id.txt"));
+        // Print python code for histogram with number of triples in each anomaly type
         //printHistogramCounts(currFolder, numPs, 4);
        
-        /*
-        Anomaly.findNearSame(map, numPs);
-        Anomaly.findNearReverse(map, numPs); 
-        Anomaly.findTransitive(map, numPs);
-        Anomaly.findSymmetric(map, numPs);
-        Anomaly.findReflexive(map, numPs);
-        Anomaly.findDuplicate(map, numPs);
-        Anomaly.findCartesianConfidence(map);
-        Anomaly.findCartesianProduct(map, numPs);
-        Anomaly.oneToMany(map, numPs);
-        Anomaly.manyToOne(map, numPs);
-        */
-
+        // Find the type and value of the maximum anomaly of each predicate
         /*
         Anomaly.findOverallAnomaly(
             Anomaly.findNearSame(map, numPs),
@@ -518,7 +562,8 @@ public class App {
             Anomaly.findDuplicate(map, numPs),
             Anomaly.findSymmetric(map, numPs));
         */
-
+    
+        // Find predicates with large Cartesian product, N:1, and 1:N scores for comparison    
         /*
         var cart = Anomaly.findCartesianProduct(trainMap, numPs);
         var otm = Anomaly.oneToMany(trainMap, numPs);
@@ -550,6 +595,6 @@ public class App {
         System.out.println("Ratio of predicates with CP > 0.7, 1:N > 0.7, N:1 > 0.7: " + bigScoreCnt + " / " + trainMap.size() + " = " + (bigScoreCnt*1.0/trainMap.size()));
         System.out.println("Number of predicates with CP > 0.7: " + cartCnt);
         System.out.println("Number of CP > 0.7 where N:1 or 1:N is 0.0: " + zeroCnt);
-*/
+        */
     }
 }

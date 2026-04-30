@@ -35,6 +35,10 @@ public class Anomaly {
         }
     }
 
+    /**
+     * Print a double array in classic format with 3 points of precision
+     * @param array the array to print
+     */
     public static void printArray(double[] array){
         //System.out.print("[");
         for (int i = 0; i < array.length; i++){
@@ -47,6 +51,11 @@ public class Anomaly {
         System.out.println();
     }
 
+    
+    /**
+     * Print an integer array in classic format
+     * @param array the array to print
+     */
     public static void printArray(int[] array){
         System.out.print("[");
         for (int i = 0; i < array.length; i++){
@@ -58,6 +67,13 @@ public class Anomaly {
         System.out.println("]");
     }
 
+
+    /**
+     * Find the maximum p' value for the current p
+     * @param matrix all p and p' values for one type of redundancy
+     * @param p current predicate for comparison
+     * @return the value of the maximum p'
+     */
     private static int maxP (int[][] matrix, int p){
         int result = matrix[p][p]; // this value is always zero
         for (int i = 0; i < matrix[p].length; i++){
@@ -72,6 +88,7 @@ public class Anomaly {
         }
         return result;
     }
+
 
     /**
      * Identifies quantity of near-same anomalies between each set of p.
@@ -402,7 +419,7 @@ public class Anomaly {
 
 
     /**
-     * Measures the amount of Cartesian product anomalies in a set of p.
+     * [OLD METHOD: NOT USED IN THESIS] Measures the amount of Cartesian product anomalies in a set of p.
      * @param dataMap The map (representing a graph) to search in.
      * @return the final measurement for each p
      */
@@ -476,7 +493,11 @@ public class Anomaly {
         return result;
     }
 
-    
+    /**
+     * Measures the confidence of Cartesian Product redundancies in the data
+     * @param dataMap The map (representing a graph) to search in.
+     * @return the final measurement for each p
+     */
     public static double[] findCartesianConfidence(HashMap<Integer, ArrayList<Triple>> dataMap){
         // calculate the confidence of the following rule
         // s->o' ^ s'->o => s->o  where o<>o' and s<>s'
@@ -590,6 +611,12 @@ public class Anomaly {
     }
 
 
+    /**
+     * The measurement of one-to-many redundancies in the data
+     * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of predicates
+     * @return the final measurement for each p
+     */
     public static double[] oneToMany(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         // (s, p, o') => (s, p, o) such that o' <> o
         int[] counts = new int[numPs];
@@ -672,6 +699,12 @@ public class Anomaly {
     }
 
 
+    /**
+     * The measurement of many-to-one redundancies in the data
+     * @param dataMap The map (representing a graph) to search in.
+     * @param numPs number of predicates
+     * @return the final measurement for each p
+     */
     public static double[] manyToOne(HashMap<Integer, ArrayList<Triple>> dataMap, int numPs){
         //(s', p, o) => (s, p, o) such that s' <> s
         int[] counts = new int[numPs];
@@ -847,8 +880,9 @@ public class Anomaly {
         return transitiveMsmt;
     }
 
+
     /**
-     * Measures the amount of Transitive relations in a set of p.
+     * Experimental, not used in thesis. Measures the amount of Transitive relations in a set of p.
      * @param dataMap The map (representing a graph) to search in.
      * @param numPs number of p's in the complete dataset
      * @return an array of the final Transitive measurement for each p.
@@ -927,10 +961,7 @@ public class Anomaly {
 
 
     /**
-     * Finds the overall anomaly coefficient for a list of p values.
-     * @param nearSame near-same anomaly values for each p
-     * @param nearReverse near-reverse anomaly values for each p
-     * @param cartesian Cartesian product anomaly values for each p
+     * Finds the overall anomaly coefficient for a list of p values. Returns values, prints values and types.
      * @return list of overall anomaly coefficient for each p value
      */
     public static double[] findOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian,
@@ -978,18 +1009,15 @@ public class Anomaly {
             resultDetails.add(details);
 
         }
-        // System.out.println("Overall Anomaly Information: ");
-        // System.out.println(resultDetails);
+        System.out.println("Overall Anomaly Information: ");
+        System.out.println(resultDetails);
 
         return result;
     }
 
-        /**
-     * Finds the overall anomaly coefficient for a list of p values.
-     * @param nearSame near-same anomaly values for each p
-     * @param nearReverse near-reverse anomaly values for each p
-     * @param cartesian Cartesian product anomaly values for each p
-     * @return list of overal anomaly coefficient for each p value
+    /**
+     * Finds the overall anomaly coefficient value and type for a list of p values.
+     * @return list of overal anomaly coefficient and types of anomaly for each p value in [[Type, Value], ...] format
      */
     public static double[][] findOverallTypedAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian,
         double[] reflexive, double[] transitive, double[] duplicate, double[] symmetric){
@@ -1053,6 +1081,15 @@ public class Anomaly {
         return resultWithType;
     }
 
+
+    /**
+     * Finds overall anomaly from only near-same, near-reverse, and Cartesian product anomalies 
+     * to mimic Tiwari et.al. original anomaly coefficient
+     * @param nearSame near-same anomaly values for each p
+     * @param nearReverse near-reverse anomaly values for each p
+     * @param cartesian Cartesian product anomaly values for each p
+     * @return list of anomaly coefficient values
+     */
     public static double[] originalOverallAnomaly(double[] nearSame, double[] nearReverse, double[] cartesian){
 
         int numPs = nearSame.length;
@@ -1091,6 +1128,8 @@ public class Anomaly {
 
     public static void main(String[] args){
         Comparator<Triple> c = new CompareTriple();
+
+        // Just testing, nothing to see here
 
         /*
         // testing near-same
